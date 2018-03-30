@@ -1,12 +1,10 @@
 package com.example.neuekaroly.ehubsharing;
 
-import android.Manifest;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -18,14 +16,41 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.LinkedList;
+import java.util.List;
+
+import Entity.ChargerPoint;
+import Entity.ChargerPointDao;
+import Entity.DaoMaster;
+import Entity.DaoSession;
 
 public class MapActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
 
+    private DaoSession mDaoSession;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mDaoSession = new DaoMaster(new DaoMaster.DevOpenHelper(this, "charger.db").getWritableDb()).newSession();
+        ChargerPointDao chargerPointDao = mDaoSession.getChargerPointDao();
+        ChargerPoint chargerPoint = new ChargerPoint();
+        chargerPoint.setAdress("Taksony");
+        chargerPoint.setConnectorTypes("ACC");
+        chargerPoint.setCost(0);
+        chargerPoint.setLatitude(3);
+        chargerPoint.setLongitude(4);
+        chargerPoint.setName("Taks");
+        chargerPoint.setOpeningHours("27/7");
+        chargerPointDao.insert(chargerPoint);
+
+        List<ChargerPoint> chargerPoints = mDaoSession.getChargerPointDao().loadAll();
+
+        for (int i = 0; i < chargerPoints.size(); i++) {
+            Log.d("TEST", chargerPoints.get(i).getAdress());
+        }
+
         setContentView(R.layout.activity_map);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
