@@ -1,4 +1,4 @@
-package Entity;
+package database;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteStatement;
