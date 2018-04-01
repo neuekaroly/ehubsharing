@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">eHubSharing</string>
     <string name="google_maps_api_key">AIzaSyDQXYZ9WGRycfhb8w60Bte-ZGdCmh8FdhY</string>
+    <string name="title_activity_charger">ChargerActivity</string>
 </resources>

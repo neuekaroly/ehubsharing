@@ -1,5 +1,6 @@
 package com.example.neuekaroly.ehubsharing;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
@@ -8,8 +9,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.facebook.stetho.Stetho;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -30,13 +34,17 @@ public class SplashActivity extends AppCompatActivity {
 
     private static int SPLASH_TIME_OUT = 3000;
 
-    SharedPreferences prefs = null;
+    private static final String TAG = "SplashActivity";
+
+    private static final int ERROR_DIALOG_REQUEST = 9001;
+
+    SharedPreferences sharedPreferences = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        prefs = getSharedPreferences("com.example.neuekaroly.ehubsharing", MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences("com.example.neuekaroly.ehubsharing", MODE_PRIVATE);
 
         Stetho.initializeWithDefaults(this);
 
@@ -46,26 +54,28 @@ public class SplashActivity extends AppCompatActivity {
         setTheme(R.style.NoActionBar);
         setContentView(R.layout.activity_splash);
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Intent homeIntent = new Intent( SplashActivity.this, MainActivity.class);
-                startActivity(homeIntent);
-                finish();
-            }
-        }, SPLASH_TIME_OUT);
+        if(isServicesOk()) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Intent homeIntent = new Intent( SplashActivity.this, MainActivity.class);
+                    startActivity(homeIntent);
+                    //finish();
+                }
+            }, SPLASH_TIME_OUT);
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        if (prefs.getBoolean("firstrun", true)) {
+        if (sharedPreferences.getBoolean("firstrun", true)) {
             Log.d("TEST", "FIRSTRUN");
 
             fillUpDatabase();
 
-            prefs.edit().putBoolean("firstrun", false).commit();
+            sharedPreferences.edit().putBoolean("firstrun", false).commit();
         }
     }
 
@@ -89,5 +99,24 @@ public class SplashActivity extends AppCompatActivity {
         for (int i = 0; i < list.size(); i++) {
             chargerPointDao.insert(list.get(i));
         }
+    }
+
+    public boolean isServicesOk() {
+        Log.d(TAG, "isServicesOk: checking google services version");
+
+        int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(SplashActivity.this);
+
+        if(available == ConnectionResult.SUCCESS) {
+            Log.d(TAG, "isServicesOk: Google Play Services is working");
+            return true;
+        }
+        else if(GoogleApiAvailability.getInstance().isUserResolvableError(available)) {
+            Log.d(TAG, "isServicesOk: an error occured but we can fix it");
+            Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(SplashActivity.this, available, ERROR_DIALOG_REQUEST);
+            dialog.show();
+        } else {
+            Toast.makeText(this, "You can't make map requests", Toast.LENGTH_SHORT).show();
+        }
+        return false;
     }
 }
