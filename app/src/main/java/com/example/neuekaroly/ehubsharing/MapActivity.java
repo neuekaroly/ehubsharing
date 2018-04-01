@@ -19,15 +19,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -46,23 +38,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-
-        Reader reader = null;
-        try {
-            reader = new BufferedReader(new InputStreamReader(getAssets().open("chargers.txt"), "UTF-8"));
-        } catch(IOException e) {
-            Log.d("Test", e.toString());
-        }
-
-        LinkedList<ChargerPoint> list = new LinkedList<>(
-                (ArrayList<ChargerPoint>) new Gson().fromJson(
-                        reader, new TypeToken<List<ChargerPoint>>(){}.getType()
-                )
-        );
-
-        /*for (int i = 0; i < list.size(); i++) {
-            Log.d("TEST", list.get(i).getAdress());
-        }*/
 
         DaoMaster.DevOpenHelper openHelper = new DaoMaster.DevOpenHelper(getApplicationContext(), "charger.db", null){
             @Override
@@ -103,12 +78,19 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
 
     private void addMarkersToMap() {
 
+        ChargerPointDao chargerPointDao = mDaoSession.getChargerPointDao();
+
+        List<ChargerPoint> chargerPoints = chargerPointDao.loadAll();
+
         Bitmap icon = BitmapFactory.decodeResource(this.getResources(), R.drawable.black_charger);
 
-        mMap.addMarker(new MarkerOptions()
-                .position(new LatLng(47.50569970,19.06325010))
-                .title("Oktogon 2.")
-                .snippet("06 1/238 1888")
-                .icon(BitmapDescriptorFactory.fromBitmap(icon)));
+        for (int i = 0; i < chargerPoints.size(); i++) {
+            mMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(chargerPoints.get(i).getLatitude(),chargerPoints.get(i).getLongitude()))
+                    .title(chargerPoints.get(i).getName())
+                    .snippet(chargerPoints.get(i).getOpeningHours())
+                    .icon(BitmapDescriptorFactory.fromBitmap(icon)));
+        }
+
     }
 }
