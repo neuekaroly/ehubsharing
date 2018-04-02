@@ -26,4 +26,18 @@
         android:layout_width="match_parent"
         android:id="@+id/activity_charger_connectortypes_text_view" />
 
+    <Button
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:text="Book this charger point"
+        android:id="@+id/activity_charger_booking_button" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/activity_charger_add_favourite_floating_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:src="@android:drawable/btn_star_big_off"
+        android:layout_margin="16dp" />
+
 </LinearLayout>

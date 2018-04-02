@@ -27,6 +27,8 @@ import java.util.List;
 
 import database.ChargerPoint;
 import database.ChargerPointDao;
+import database.Customer;
+import database.CustomerDao;
 import database.DaoMaster;
 import database.DaoSession;
 
@@ -99,6 +101,11 @@ public class SplashActivity extends AppCompatActivity {
         for (int i = 0; i < list.size(); i++) {
             chargerPointDao.insert(list.get(i));
         }
+
+        CustomerDao customerPointDao = mDaoSession.getCustomerDao();
+        Customer customer = new Customer();
+        customer.setId(1L);
+        customerPointDao.insert(customer);
     }
 
     public boolean isServicesOk() {
