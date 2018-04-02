@@ -1,17 +1,17 @@
 package com.example.neuekaroly.ehubsharing;
 
-import android.content.Intent;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
-import java.sql.Time;
-import java.util.Date;
+import java.util.Calendar;
 
 import database.ChargerPoint;
 import database.ChargerPointDao;
@@ -92,6 +92,25 @@ public class ChargerActivity extends AppCompatActivity {
 
                     Log.d("TEST", "Successfully added to the favourites");
                 }
+            }
+        });
+
+        Button bookingButton = findViewById(R.id.activity_charger_booking_button);
+
+        bookingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                Calendar mcurrentTime = Calendar.getInstance();
+                int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+                int minute = mcurrentTime.get(Calendar.MINUTE);
+                CustomTimePickerDialog mTimePicker;
+                mTimePicker = new CustomTimePickerDialog(ChargerActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                    }
+                }, hour, minute, true);
+                mTimePicker.setTitle("Select Time");
+                mTimePicker.show();
             }
         });
     }
