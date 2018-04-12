@@ -11,6 +11,7 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -43,8 +44,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
 
         mDaoSession = new DaoMaster(new DaoMaster.DevOpenHelper(this, "charger.db").getWritableDb()).newSession();
 
-       // MapPointsWriter mapPointsWriter = new MapPointsWriter();
-
         setContentView(R.layout.activity_map);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -61,7 +60,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                 Intent intent = new Intent(MapActivity.this, ChargerActivity.class);
                 intent.putExtra("CHARGER_ID", marker.getId().substring(1, marker.getId().length()));
                 startActivity(intent);
-                //marker.hideInfoWindow();
             }
         });
 
@@ -79,20 +77,20 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
 
     private void addMarkersToMap() {
 
-        ChargerPointDao chargerPointDao = mDaoSession.getChargerPointDao();
+            ChargerPointDao chargerPointDao = mDaoSession.getChargerPointDao();
 
-        List<ChargerPoint> chargerPoints = chargerPointDao.loadAll();
+            List<ChargerPoint> chargerPoints = chargerPointDao.loadAll();
 
-        Bitmap icon = BitmapFactory.decodeResource(this.getResources(), R.drawable.black_charger);
+            Bitmap icon = BitmapFactory.decodeResource(this.getResources(), R.drawable.black_charger);
 
-        for (int i = 0; i < chargerPoints.size(); i++) {
-            MarkerOptions markerOptions = new MarkerOptions()
-                    .position(new LatLng(chargerPoints.get(i).getLatitude(),chargerPoints.get(i).getLongitude()))
-                    .title(chargerPoints.get(i).getName())
-                    .snippet(chargerPoints.get(i).getOpeningHours())
-                    .flat(true)
-                    .icon(BitmapDescriptorFactory.fromBitmap(icon));
-            mMap.addMarker(markerOptions);
+            for (int i = 0; i < chargerPoints.size(); i++) {
+                MarkerOptions markerOptions = new MarkerOptions()
+                        .position(new LatLng(chargerPoints.get(i).getLatitude(),chargerPoints.get(i).getLongitude()))
+                        .title(chargerPoints.get(i).getName())
+                        .snippet(chargerPoints.get(i).getOpeningHours())
+                        .flat(true)
+                        .icon(BitmapDescriptorFactory.fromBitmap(icon));
+                mMap.addMarker(markerOptions);
         }
 
     }

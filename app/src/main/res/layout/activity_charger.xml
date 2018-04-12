@@ -7,30 +7,42 @@
     <include layout="@layout/toolbar_layout" />
 
     <TextView
+        android:id="@+id/activity_charger_adress_text_view"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:id="@+id/activity_charger_adress_text_view" />
+        android:layout_width="match_parent" />
 
     <TextView
+        android:id="@+id/activity_charger_openinghours_text_view"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:id="@+id/activity_charger_openinghours_text_view" />
+        android:layout_width="match_parent" />
 
     <TextView
+        android:id="@+id/activity_charger_cost_text_view"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:id="@+id/activity_charger_cost_text_view" />
+        android:layout_width="match_parent" />
 
     <TextView
+        android:id="@+id/activity_charger_connectortypes_text_view"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:id="@+id/activity_charger_connectortypes_text_view" />
+        android:layout_width="match_parent" />
 
     <Button
+        android:id="@+id/activity_charger_booking_time_button"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:text="Book this charger point"
-        android:id="@+id/activity_charger_booking_button" />
+        android:text="Select the start time" />
+
+    <Spinner
+        android:id="@+id/activity_charger_booking_spinner"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:entries = "@array/reservations_arrays"/>
+
+    <Button
+        android:id="@+id/activity_charger_booking_button"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:text="Book this charger point" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/activity_charger_add_favourite_floating_button"

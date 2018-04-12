@@ -36,6 +36,7 @@ public class ReservationDao extends AbstractDao<Reservation, Long> {
 
     private DaoSession daoSession;
 
+    private Query<Reservation> chargerPoint_ReservationsQuery;
     private Query<Reservation> customer_ReservationsQuery;
 
     public ReservationDao(DaoConfig config) {
@@ -157,6 +158,20 @@ public class ReservationDao extends AbstractDao<Reservation, Long> {
         return true;
     }
     
+    /** Internal query to resolve the "reservations" to-many relationship of ChargerPoint. */
+    public List<Reservation> _queryChargerPoint_Reservations(long customerId) {
+        synchronized (this) {
+            if (chargerPoint_ReservationsQuery == null) {
+                QueryBuilder<Reservation> queryBuilder = queryBuilder();
+                queryBuilder.where(Properties.CustomerId.eq(null));
+                chargerPoint_ReservationsQuery = queryBuilder.build();
+            }
+        }
+        Query<Reservation> query = chargerPoint_ReservationsQuery.forCurrentThread();
+        query.setParameter(0, customerId);
+        return query.list();
+    }
+
     /** Internal query to resolve the "reservations" to-many relationship of Customer. */
     public List<Reservation> _queryCustomer_Reservations(long customerId) {
         synchronized (this) {

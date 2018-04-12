@@ -35,6 +35,8 @@ public class ChargerPointDao extends AbstractDao<ChargerPoint, Long> {
         public final static Property ConnectorTypes = new Property(7, String.class, "connectorTypes", false, "CONNECTOR_TYPES");
     }
 
+    private DaoSession daoSession;
+
     private Query<ChargerPoint> customer_ChargerPointsWitThisCustomerQuery;
 
     public ChargerPointDao(DaoConfig config) {
@@ -43,6 +45,7 @@ public class ChargerPointDao extends AbstractDao<ChargerPoint, Long> {
     
     public ChargerPointDao(DaoConfig config, DaoSession daoSession) {
         super(config, daoSession);
+        this.daoSession = daoSession;
     }
 
     /** Creates the underlying database table. */
@@ -121,6 +124,12 @@ public class ChargerPointDao extends AbstractDao<ChargerPoint, Long> {
         if (connectorTypes != null) {
             stmt.bindString(8, connectorTypes);
         }
+    }
+
+    @Override
+    protected final void attachEntity(ChargerPoint entity) {
+        super.attachEntity(entity);
+        entity.__setDaoSession(daoSession);
     }
 
     @Override

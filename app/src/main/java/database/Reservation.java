@@ -20,7 +20,7 @@ public class Reservation {
 
     private long chargerPointId;
 
-    private long customerId;
+    private long customerId;    
 
     @ToOne(joinProperty = "chargerPointId")
     private ChargerPoint chargerPoint;

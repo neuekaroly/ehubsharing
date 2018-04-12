@@ -95,7 +95,7 @@ public class ChargerActivity extends AppCompatActivity {
             }
         });
 
-        Button bookingButton = findViewById(R.id.activity_charger_booking_button);
+        Button bookingButton = findViewById(R.id.activity_charger_booking_time_button);
 
         bookingButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,6 +107,7 @@ public class ChargerActivity extends AppCompatActivity {
                 mTimePicker = new CustomTimePickerDialog(ChargerActivity.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                        Log.d("TEST", "TIME IS CHANGED");
                     }
                 }, hour, minute, true);
                 mTimePicker.setTitle("Select Time");
