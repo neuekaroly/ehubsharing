@@ -1,0 +1,14 @@
+<tabs>
+    <tab
+        id="@+id/tab_map"
+        icon="@mipmap/ic_map"
+        title="Map" />
+    <tab
+        id="@+id/tab_reservations"
+        icon="@mipmap/ic_reservation"
+        title="Reservations" />
+    <tab
+        id="@+id/tab_favourites"
+        icon="@mipmap/ic_favourite"
+        title="Favourites" />
+</tabs>
