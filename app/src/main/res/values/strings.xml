@@ -7,4 +7,10 @@
         <item>Half hour</item>
         <item>One hour</item>
     </string-array>
+
+    <string name="not_selected_starttime_string">
+        Please select the start time!</string>
+
+    <string name="not_valid_the_selected_starttime_string">
+        Please select another time, this is already taken!</string>
 </resources>

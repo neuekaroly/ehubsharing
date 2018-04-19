@@ -19,6 +19,7 @@ import org.joda.time.DateTime;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import database.ChargerPoint;
@@ -30,7 +31,6 @@ import database.DaoSession;
 import database.JoinCustomersWithChargerPoints;
 import database.JoinCustomersWithChargerPointsDao;
 import database.Reservation;
-import database.ReservationDao;
 
 public class ChargerActivity extends AppCompatActivity {
 
@@ -44,6 +44,8 @@ public class ChargerActivity extends AppCompatActivity {
 
     DateTime startDateTime = null;
 
+    List<Reservation> reservations;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,10 +58,7 @@ public class ChargerActivity extends AppCompatActivity {
 
         mCharger = chargerPointDao.load(chargerPointId);
 
-        for (int i = 0; i <  mCharger.getReservations().size(); i++) {
-            Log.d("TEST", new DateTime(mCharger.getReservations().get(i).getStartDate()).toString());
-            Log.d("TEST", new DateTime(mCharger.getReservations().get(i).getFinishDate()).toString());
-        }
+        reservations = mCharger.getReservations();
 
         CustomerDao customerDao = mDaoSession.getCustomerDao();
 
@@ -120,22 +119,25 @@ public class ChargerActivity extends AppCompatActivity {
                         endDateTime = startDateTime.plusMinutes(60);
                     }
 
-                    Reservation reservation = new Reservation();
-                    reservation.setCustomerId(1);
-                    reservation.setStartDate(startDateTime.toDate());
-                    reservation.setFinishDate(endDateTime.toDate());
-                    reservation.setChargerPointId(chargerPointId);
+                    if(checkReservationTimeIsValid(startDateTime, endDateTime)) {
 
-                    mDaoSession.insert(reservation);
+                        Reservation reservation = new Reservation();
+                        reservation.setCustomerId(1);
+                        reservation.setStartDate(startDateTime.toDate());
+                        reservation.setFinishDate(endDateTime.toDate());
+                        reservation.setChargerPointId(chargerPointId);
 
-                    List<Reservation> chargers = mCharger.getReservations();
+                        mDaoSession.insert(reservation);
 
-                    chargers.add(reservation);
+                        reservations.add(reservation);
 
-                    Log.d("TEST", "ADD NEW RESERVATION");
+                        Log.d("TEST", "ADDED NEW RESERVATION");
+                    } else {
+                        Toast.makeText(getApplicationContext(),getString(R.string.not_valid_the_selected_starttime_string), Toast.LENGTH_LONG).show();
+                    }
 
                 } else {
-                    Toast.makeText(getApplicationContext(),"Please select the start time", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), getString(R.string.not_selected_starttime_string), Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -155,7 +157,7 @@ public class ChargerActivity extends AppCompatActivity {
 
                     joinCustomersWithChargerPointsDao.insert(joinCustomersWithChargerPoints);
 
-                    Log.d("TEST", "Successfully added to the favourites");
+                    Log.d("TEST", "Added to the favourites");
 
                     addFavourite.hide();
                 }
@@ -179,8 +181,6 @@ public class ChargerActivity extends AppCompatActivity {
 
                                 startDateTime = new DateTime(Calendar.YEAR,Calendar.MONTH,Calendar.DAY_OF_MONTH,hourOfDay,minute);
 
-                                Date date = startDateTime.toDate();
-
                             }
                         }, now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE),true);
                 Timepoint timePoint = new Timepoint(23,0,0);
@@ -190,5 +190,18 @@ public class ChargerActivity extends AppCompatActivity {
                 tpd.show(getFragmentManager(), "Select time");
             }
         });
+    }
+
+    private boolean checkReservationTimeIsValid(DateTime newStartTime, DateTime newFinishTime) {
+
+        for (int i = 0; i < reservations.size(); i++) {
+            if((new DateTime(reservations.get(i).getStartDate()).isBefore(newStartTime) && newStartTime.isBefore(new DateTime(reservations.get(i).getFinishDate())))
+                    || (new DateTime(reservations.get(i).getStartDate()).isBefore(newFinishTime) && newFinishTime.isBefore(new DateTime(reservations.get(i).getFinishDate())))
+                    || startDateTime.isEqual(new DateTime(reservations.get(i).getStartDate()))) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

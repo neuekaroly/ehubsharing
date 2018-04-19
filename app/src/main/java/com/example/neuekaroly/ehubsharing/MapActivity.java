@@ -26,7 +26,6 @@ import java.util.List;
 
 import database.ChargerPoint;
 import database.ChargerPointDao;
-import database.CustomerDao;
 import database.DaoMaster;
 import database.DaoSession;
 
