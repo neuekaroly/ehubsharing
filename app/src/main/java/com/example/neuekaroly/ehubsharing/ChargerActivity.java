@@ -1,6 +1,5 @@
 package com.example.neuekaroly.ehubsharing;
 
-import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -9,7 +8,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.TimePicker;
+import com.wdullaer.materialdatetimepicker.time.RadialPickerLayout;
+import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
+import com.wdullaer.materialdatetimepicker.time.Timepoint;
 
 import java.util.Calendar;
 
@@ -80,6 +81,7 @@ public class ChargerActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if(mCustomer.getChargerPointsWitThisCustomer().contains(mCharger)) {
                     Log.d("TEST", "It is already in the favourites");
+                    mCustomer.refresh();
 
                 } else {
                     JoinCustomersWithChargerPointsDao joinCustomersWithChargerPointsDao = mDaoSession.getJoinCustomersWithChargerPointsDao();
@@ -95,23 +97,32 @@ public class ChargerActivity extends AppCompatActivity {
             }
         });
 
-        Button bookingButton = findViewById(R.id.activity_charger_booking_time_button);
-
-        bookingButton.setOnClickListener(new View.OnClickListener() {
+        Button bookingTimeButton = findViewById(R.id.activity_charger_booking_time_button);
+        bookingTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                Calendar mcurrentTime = Calendar.getInstance();
-                int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
-                int minute = mcurrentTime.get(Calendar.MINUTE);
-                CustomTimePickerDialog mTimePicker;
-                mTimePicker = new CustomTimePickerDialog(ChargerActivity.this, new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                        Log.d("TEST", "TIME IS CHANGED");
-                    }
-                }, hour, minute, true);
-                mTimePicker.setTitle("Select Time");
-                mTimePicker.show();
+                Calendar now = Calendar.getInstance();
+                TimePickerDialog tpd = com.wdullaer.materialdatetimepicker.time.TimePickerDialog.newInstance(
+                        new com.wdullaer.materialdatetimepicker.time.TimePickerDialog.OnTimeSetListener() {
+                            @Override
+                            public void onTimeSet(RadialPickerLayout view, int hourOfDay, int minute, int second) {
+                                Log.d("TEST", "TIME IS CHANGED");
+                                Log.d("TEST", Integer.toString(hourOfDay) + Integer.toString(minute));
+                            }
+                        }, now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE),true);
+                Timepoint timePoint = new Timepoint(23,0,0);
+                tpd.setMinTime(now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE), now.get(Calendar.SECOND));
+                tpd.setMaxTime(timePoint);
+                tpd.setTitle("Select time");
+                tpd.show(getFragmentManager(), "Select time");
+            }
+        });
+
+        Button bookingButton = findViewById(R.id.activity_charger_booking_button);
+        bookingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
     }

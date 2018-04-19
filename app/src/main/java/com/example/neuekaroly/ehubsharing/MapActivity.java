@@ -11,8 +11,6 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -28,6 +26,7 @@ import java.util.List;
 
 import database.ChargerPoint;
 import database.ChargerPointDao;
+import database.CustomerDao;
 import database.DaoMaster;
 import database.DaoSession;
 
@@ -69,10 +68,19 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
 
         LatLng southMap = new LatLng(47.024250, 15.834115);
         LatLng westMap = new LatLng(47.908052, 23.211434);
-
         LatLngBounds mapBounds = new LatLngBounds(southMap, westMap);
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mapBounds, 40));
+        mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+            @Override
+            public void onMapLoaded() {
+                LatLng southMap = new LatLng(47.024250, 15.834115);
+                LatLng westMap = new LatLng(47.908052, 23.211434);
+                LatLngBounds mapBounds = new LatLngBounds(southMap, westMap);
+                mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mapBounds, 40));
+            }
+        });
+
+        //mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mapBounds, 40));
     }
 
     private void addMarkersToMap() {
@@ -93,5 +101,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                 mMap.addMarker(markerOptions);
         }
 
+       /* CustomerDao customerDao = mDaoSession.getCustomerDao();
+            Log.d("TEST", Integer.toString(customerDao.loadAll().size()));*/
     }
 }
