@@ -1,13 +1,11 @@
 package database;
 
 import java.util.List;
-import java.util.ArrayList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteStatement;
 
 import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.Property;
-import org.greenrobot.greendao.internal.SqlUtils;
 import org.greenrobot.greendao.internal.DaoConfig;
 import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.database.DatabaseStatement;
@@ -34,8 +32,6 @@ public class ReservationDao extends AbstractDao<Reservation, Long> {
         public final static Property FinishDate = new Property(4, java.util.Date.class, "finishDate", false, "FINISH_DATE");
     }
 
-    private DaoSession daoSession;
-
     private Query<Reservation> chargerPoint_ReservationsQuery;
     private Query<Reservation> customer_ReservationsQuery;
 
@@ -45,7 +41,6 @@ public class ReservationDao extends AbstractDao<Reservation, Long> {
     
     public ReservationDao(DaoConfig config, DaoSession daoSession) {
         super(config, daoSession);
-        this.daoSession = daoSession;
     }
 
     /** Creates the underlying database table. */
@@ -102,12 +97,6 @@ public class ReservationDao extends AbstractDao<Reservation, Long> {
     }
 
     @Override
-    protected final void attachEntity(Reservation entity) {
-        super.attachEntity(entity);
-        entity.__setDaoSession(daoSession);
-    }
-
-    @Override
     public Long readKey(Cursor cursor, int offset) {
         return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }    
@@ -159,16 +148,16 @@ public class ReservationDao extends AbstractDao<Reservation, Long> {
     }
     
     /** Internal query to resolve the "reservations" to-many relationship of ChargerPoint. */
-    public List<Reservation> _queryChargerPoint_Reservations(long customerId) {
+    public List<Reservation> _queryChargerPoint_Reservations(long chargerPointId) {
         synchronized (this) {
             if (chargerPoint_ReservationsQuery == null) {
                 QueryBuilder<Reservation> queryBuilder = queryBuilder();
-                queryBuilder.where(Properties.CustomerId.eq(null));
+                queryBuilder.where(Properties.ChargerPointId.eq(null));
                 chargerPoint_ReservationsQuery = queryBuilder.build();
             }
         }
         Query<Reservation> query = chargerPoint_ReservationsQuery.forCurrentThread();
-        query.setParameter(0, customerId);
+        query.setParameter(0, chargerPointId);
         return query.list();
     }
 
@@ -187,97 +176,4 @@ public class ReservationDao extends AbstractDao<Reservation, Long> {
         return query.list();
     }
 
-    private String selectDeep;
-
-    protected String getSelectDeep() {
-        if (selectDeep == null) {
-            StringBuilder builder = new StringBuilder("SELECT ");
-            SqlUtils.appendColumns(builder, "T", getAllColumns());
-            builder.append(',');
-            SqlUtils.appendColumns(builder, "T0", daoSession.getChargerPointDao().getAllColumns());
-            builder.append(" FROM RESERVATION T");
-            builder.append(" LEFT JOIN CHARGER_POINT T0 ON T.\"CHARGER_POINT_ID\"=T0.\"_id\"");
-            builder.append(' ');
-            selectDeep = builder.toString();
-        }
-        return selectDeep;
-    }
-    
-    protected Reservation loadCurrentDeep(Cursor cursor, boolean lock) {
-        Reservation entity = loadCurrent(cursor, 0, lock);
-        int offset = getAllColumns().length;
-
-        ChargerPoint chargerPoint = loadCurrentOther(daoSession.getChargerPointDao(), cursor, offset);
-         if(chargerPoint != null) {
-            entity.setChargerPoint(chargerPoint);
-        }
-
-        return entity;    
-    }
-
-    public Reservation loadDeep(Long key) {
-        assertSinglePk();
-        if (key == null) {
-            return null;
-        }
-
-        StringBuilder builder = new StringBuilder(getSelectDeep());
-        builder.append("WHERE ");
-        SqlUtils.appendColumnsEqValue(builder, "T", getPkColumns());
-        String sql = builder.toString();
-        
-        String[] keyArray = new String[] { key.toString() };
-        Cursor cursor = db.rawQuery(sql, keyArray);
-        
-        try {
-            boolean available = cursor.moveToFirst();
-            if (!available) {
-                return null;
-            } else if (!cursor.isLast()) {
-                throw new IllegalStateException("Expected unique result, but count was " + cursor.getCount());
-            }
-            return loadCurrentDeep(cursor, true);
-        } finally {
-            cursor.close();
-        }
-    }
-    
-    /** Reads all available rows from the given cursor and returns a list of new ImageTO objects. */
-    public List<Reservation> loadAllDeepFromCursor(Cursor cursor) {
-        int count = cursor.getCount();
-        List<Reservation> list = new ArrayList<Reservation>(count);
-        
-        if (cursor.moveToFirst()) {
-            if (identityScope != null) {
-                identityScope.lock();
-                identityScope.reserveRoom(count);
-            }
-            try {
-                do {
-                    list.add(loadCurrentDeep(cursor, false));
-                } while (cursor.moveToNext());
-            } finally {
-                if (identityScope != null) {
-                    identityScope.unlock();
-                }
-            }
-        }
-        return list;
-    }
-    
-    protected List<Reservation> loadDeepAllAndCloseCursor(Cursor cursor) {
-        try {
-            return loadAllDeepFromCursor(cursor);
-        } finally {
-            cursor.close();
-        }
-    }
-    
-
-    /** A raw-style query where you can pass any WHERE clause and arguments. */
-    public List<Reservation> queryDeep(String where, String... selectionArg) {
-        Cursor cursor = db.rawQuery(getSelectDeep() + where, selectionArg);
-        return loadDeepAllAndCloseCursor(cursor);
-    }
- 
 }

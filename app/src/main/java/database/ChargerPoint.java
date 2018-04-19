@@ -19,7 +19,7 @@ public class ChargerPoint {
     @Id(autoincrement = true)
     private Long id;
 
-    @ToMany(referencedJoinProperty = "customerId")
+    @ToMany(referencedJoinProperty = "chargerPointId")
     private List<Reservation> reservations;
 
     @NotNull
