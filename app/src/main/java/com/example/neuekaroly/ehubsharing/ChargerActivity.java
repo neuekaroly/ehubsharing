@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.wdullaer.materialdatetimepicker.time.RadialPickerLayout;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 import com.wdullaer.materialdatetimepicker.time.Timepoint;
@@ -75,27 +77,28 @@ public class ChargerActivity extends AppCompatActivity {
         textView = (TextView) findViewById(R.id.activity_charger_connectortypes_text_view);
         textView.setText("Connector types: " + mCharger.getConnectorTypes());
 
-        FloatingActionButton addFavourite = findViewById(R.id.activity_charger_add_favourite_floating_button);
-        addFavourite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(mCustomer.getChargerPointsWitThisCustomer().contains(mCharger)) {
-                    Log.d("TEST", "It is already in the favourites");
-                    mCustomer.refresh();
+        final FloatingActionButton addFavourite = findViewById(R.id.activity_charger_add_favourite_floating_button);
 
-                } else {
-                    JoinCustomersWithChargerPointsDao joinCustomersWithChargerPointsDao = mDaoSession.getJoinCustomersWithChargerPointsDao();
+        if(!mCustomer.getChargerPointsWitThisCustomer().contains(mCharger)){
+            addFavourite.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                        JoinCustomersWithChargerPointsDao joinCustomersWithChargerPointsDao = mDaoSession.getJoinCustomersWithChargerPointsDao();
 
-                    JoinCustomersWithChargerPoints joinCustomersWithChargerPoints = new JoinCustomersWithChargerPoints();
-                    joinCustomersWithChargerPoints.setChargerPointId(mCharger.getId());
-                    joinCustomersWithChargerPoints.setCustomerId(1L);
+                        JoinCustomersWithChargerPoints joinCustomersWithChargerPoints = new JoinCustomersWithChargerPoints();
+                        joinCustomersWithChargerPoints.setChargerPointId(mCharger.getId());
+                        joinCustomersWithChargerPoints.setCustomerId(1L);
 
-                    joinCustomersWithChargerPointsDao.insert(joinCustomersWithChargerPoints);
+                        joinCustomersWithChargerPointsDao.insert(joinCustomersWithChargerPoints);
 
-                    Log.d("TEST", "Successfully added to the favourites");
+                        Log.d("TEST", "Successfully added to the favourites");
+
+                        addFavourite.hide();
                 }
-            }
-        });
+            });
+        } else {
+            addFavourite.hide();
+        }
 
         Button bookingTimeButton = findViewById(R.id.activity_charger_booking_time_button);
         bookingTimeButton.setOnClickListener(new View.OnClickListener() {
