@@ -1,6 +1,7 @@
 package adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +16,7 @@ import database.ChargerPoint;
 public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.MyViewHolder>{
     private List<ChargerPoint> favouritesList;
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
+    public class MyViewHolder extends RecyclerView.ViewHolder{
         public TextView name, adress, openingHours;
 
         public MyViewHolder(View view) {
@@ -44,6 +45,7 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.MyVi
         holder.name.setText(chargerPoint.getName());
         holder.adress.setText(chargerPoint.getAdress());
         holder.openingHours.setText(chargerPoint.getOpeningHours());
+
     }
 
     @Override

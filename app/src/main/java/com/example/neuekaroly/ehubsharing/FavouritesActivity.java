@@ -8,6 +8,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.view.View;
 import android.widget.Toast;
 
 import com.roughike.bottombar.BottomBar;
@@ -18,8 +19,8 @@ import java.util.List;
 
 import adapter.FavouriteAdapter;
 import customitems.CustomDividerItemDecoration;
+import customitems.RecyclerTouchListener;
 import database.ChargerPoint;
-import database.ChargerPointDao;
 import database.CustomerDao;
 import database.DaoMaster;
 import database.DaoSession;
@@ -104,7 +105,24 @@ public class FavouritesActivity extends AppCompatActivity {
                 chargerPointList.remove(position);
                 mAdapter.notifyDataSetChanged();
             }
+
+
         };
+
+        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new RecyclerTouchListener.ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                Toast.makeText(getApplicationContext(), chargerPointList.get(position).getId() + " is selected!", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(FavouritesActivity.this, MapActivity.class);
+                intent.putExtra("CHARGER_ID", Long.toString(chargerPointList.get(position).getId()));
+                startActivity(intent);
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+
+            }
+        }));
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         itemTouchHelper.attachToRecyclerView(recyclerView);

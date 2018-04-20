@@ -12,6 +12,7 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -37,6 +38,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     private GoogleMap mMap;
 
     private DaoSession mDaoSession;
+
+    private Long mCameraPosition = -1L;
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
@@ -68,6 +71,12 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                 }
             }
         });
+
+        String extra = getIntent().getStringExtra("CHARGER_ID");
+        if(extra != null) {
+            Log.d("TEST", getIntent().getStringExtra("CHARGER_ID"));
+            mCameraPosition = Long.parseLong(extra);
+        }
     }
 
     @Override
@@ -94,21 +103,25 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
 
         mMap.getUiSettings().setZoomControlsEnabled(true);
 
+        //mMap.setPadding();
+
         addMarkersToMap();
 
         LatLng southMap = new LatLng(47.024250, 15.834115);
         LatLng westMap = new LatLng(47.908052, 23.211434);
         LatLngBounds mapBounds = new LatLngBounds(southMap, westMap);
 
-        mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
-            @Override
-            public void onMapLoaded() {
-                LatLng southMap = new LatLng(47.024250, 15.834115);
-                LatLng westMap = new LatLng(47.908052, 23.211434);
-                LatLngBounds mapBounds = new LatLngBounds(southMap, westMap);
-                mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mapBounds, 40));
-            }
-        });
+        if(mCameraPosition == -1L) {
+            mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+                @Override
+                public void onMapLoaded() {
+                    LatLng southMap = new LatLng(47.024250, 15.834115);
+                    LatLng westMap = new LatLng(47.908052, 23.211434);
+                    LatLngBounds mapBounds = new LatLngBounds(southMap, westMap);
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mapBounds, 40));
+                }
+            });
+        }
 
         //mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mapBounds, 40));
     }
@@ -129,6 +142,11 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                         .flat(true)
                         .icon(BitmapDescriptorFactory.fromBitmap(icon));
                 mMap.addMarker(markerOptions);
+                if(mCameraPosition != -1L) {
+                    if(chargerPoints.get(i).getId() == mCameraPosition) {
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(markerOptions.getPosition(), 14));
+                    }
+                }
         }
     }
 }
