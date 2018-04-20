@@ -18,8 +18,6 @@ import com.wdullaer.materialdatetimepicker.time.Timepoint;
 import org.joda.time.DateTime;
 
 import java.util.Calendar;
-import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 import database.ChargerPoint;

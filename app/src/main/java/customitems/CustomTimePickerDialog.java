@@ -1,4 +1,4 @@
-package com.example.neuekaroly.ehubsharing;
+package customitems;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -10,10 +10,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.widget.NumberPicker;
 import android.widget.TimePicker;
-
-/**
- * Created by neue.karoly on 2018.04.02..
- */
 
 public class CustomTimePickerDialog extends TimePickerDialog {
 
