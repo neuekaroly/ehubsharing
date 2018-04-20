@@ -1,11 +1,11 @@
 package com.example.neuekaroly.ehubsharing;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.res.AssetFileDescriptor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.IdRes;
 import android.support.annotation.RequiresApi;
@@ -58,10 +58,25 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
             @Override
             public void onTabSelected(@IdRes int tabId) {
                 if (tabId == R.id.tab_favourites) {
-                    Log.d("TEST", "SELECTED FAVOURITES");
+                    Intent intent = new Intent(MapActivity.this, FavouritesActivity.class);
+                    intent.putExtra("CUSTOMER_ID", 1L);
+                    startActivity(intent);
+                } else if (tabId == R.id.tab_reservations) {
+                    Intent intent = new Intent(MapActivity.this, ReservationsActivity.class);
+                    intent.putExtra("CUSTOMER_ID", 1L);
+                    startActivity(intent);
                 }
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        final BottomBar bottomBar = (BottomBar) findViewById(R.id.bottomBar);
+
+        bottomBar.selectTabAtPosition(0);
     }
 
     @Override
@@ -115,8 +130,5 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                         .icon(BitmapDescriptorFactory.fromBitmap(icon));
                 mMap.addMarker(markerOptions);
         }
-
-       /* CustomerDao customerDao = mDaoSession.getCustomerDao();
-            Log.d("TEST", Integer.toString(customerDao.loadAll().size()));*/
     }
 }
