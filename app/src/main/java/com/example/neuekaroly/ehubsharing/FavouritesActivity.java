@@ -5,9 +5,10 @@ import android.support.annotation.IdRes;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
+import android.widget.Toast;
 
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
@@ -19,18 +20,24 @@ import adapter.FavouriteAdapter;
 import customitems.CustomDividerItemDecoration;
 import database.ChargerPoint;
 import database.ChargerPointDao;
+import database.CustomerDao;
 import database.DaoMaster;
 import database.DaoSession;
+import database.JoinCustomersWithChargerPoints;
+import database.JoinCustomersWithChargerPointsDao;
 
 public class FavouritesActivity extends AppCompatActivity {
     private List<ChargerPoint> chargerPointList = new ArrayList<>();
     private RecyclerView recyclerView;
     private FavouriteAdapter mAdapter;
+    DaoSession mDaoSession;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favourites);
+
+        mDaoSession = new DaoMaster(new DaoMaster.DevOpenHelper(this, "charger.db").getWritableDb()).newSession();
 
         final BottomBar bottomBar = (BottomBar) findViewById(R.id.bottomBar);
 
@@ -59,19 +66,61 @@ public class FavouritesActivity extends AppCompatActivity {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addItemDecoration(new CustomDividerItemDecoration(this, LinearLayoutManager.VERTICAL, 16));
 
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT ) {
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                Toast.makeText(FavouritesActivity.this, "on Swiped ", Toast.LENGTH_SHORT).show();
+                final int position = viewHolder.getAdapterPosition();
+
+                //TODO: REFACTOR THIS SPAGHETTI CODE
+
+                CustomerDao customerDao = mDaoSession.getCustomerDao();
+
+                List<ChargerPoint> chargerPointsWitThisCustomer = customerDao.load(1L).getChargerPointsWitThisCustomer();
+
+                Long deleteChargerId = chargerPointsWitThisCustomer.get(position).getId();
+
+                JoinCustomersWithChargerPointsDao joinCustomersWithChargerPointsDao = mDaoSession.getJoinCustomersWithChargerPointsDao();
+
+                List<JoinCustomersWithChargerPoints> joinCustomersWithChargerPoints = joinCustomersWithChargerPointsDao.loadAll();
+
+                for (int i = 0; i < joinCustomersWithChargerPoints.size(); i++) {
+                    if(joinCustomersWithChargerPoints.get(i).getChargerPointId() == deleteChargerId && joinCustomersWithChargerPoints.get(i).getCustomerId() == 1L) {
+                        JoinCustomersWithChargerPoints deleteFavourite = joinCustomersWithChargerPoints.get(i);
+                        joinCustomersWithChargerPointsDao.delete(deleteFavourite);
+                        break;
+                    }
+                }
+
+                //TODO: END
+
+
+                chargerPointList.remove(position);
+                mAdapter.notifyDataSetChanged();
+            }
+        };
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+
         recyclerView.setAdapter(mAdapter);
 
         prepareFavouritesData();
     }
+
     private void prepareFavouritesData() {
-        DaoSession mDaoSession = new DaoMaster(new DaoMaster.DevOpenHelper(this, "charger.db").getWritableDb()).newSession();
+        CustomerDao customerDao = mDaoSession.getCustomerDao();
 
-        ChargerPointDao chargerPointDao = mDaoSession.getChargerPointDao();
+        List<ChargerPoint> chargerPointsWitThisCustomer = customerDao.load(1L).getChargerPointsWitThisCustomer();
 
-        for (int j = 0; j < 5; j++) {
-            for (int i = 0; i < chargerPointDao.loadAll().size(); i++) {
-                chargerPointList.add(chargerPointDao.loadAll().get(i));
-            }
+        for (int i = 0; i < chargerPointsWitThisCustomer.size(); i++) {
+            chargerPointList.add(chargerPointsWitThisCustomer.get(i));
         }
 
         mAdapter.notifyDataSetChanged();
