@@ -7,19 +7,30 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
 
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
+
+import net.danlew.android.joda.JodaTimeAndroid;
+
+import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import adapter.ReservationAdapter;
+import customitems.CustomDividerItemDecoration;
+import customitems.RecyclerTouchListener;
 import database.ChargerPointDao;
 import database.CustomerDao;
 import database.DaoMaster;
 import database.DaoSession;
 import database.Reservation;
+import database.ReservationDao;
 import helpers.ChargerReservation;
 
 public class ReservationsActivity extends AppCompatActivity {
@@ -35,34 +46,10 @@ public class ReservationsActivity extends AppCompatActivity {
 
         mDaoSession = new DaoMaster(new DaoMaster.DevOpenHelper(this, "charger.db").getWritableDb()).newSession();
 
-        final BottomBar bottomBar = (BottomBar) findViewById(R.id.bottomBar);
 
-        bottomBar.selectTabAtPosition(1);
+        initBottomBar();
 
-        bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
-            @Override
-            public void onTabSelected(@IdRes int tabId) {
-                if (tabId == R.id.tab_favourites) {
-                    Intent intent = new Intent(ReservationsActivity.this, FavouritesActivity.class);
-                    intent.putExtra("CUSTOMER_ID", 1L);
-                    startActivity(intent);
-                } else if (tabId == R.id.tab_map) {
-                    Intent intent = new Intent(ReservationsActivity.this, MapActivity.class);
-                    intent.putExtra("CUSTOMER_ID", 1L);
-                    startActivity(intent);
-                }
-            }
-        });
-
-
-
-        recyclerView = (RecyclerView) findViewById(R.id.activity_reservations_recycler_view);
-
-        mAdapter = new ReservationAdapter(chargerReservationList);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(mAdapter);
+        initRecyclerView();
 
         prepareReservationsData();
 
@@ -81,5 +68,78 @@ public class ReservationsActivity extends AppCompatActivity {
         }
 
         mAdapter.notifyDataSetChanged();
+    }
+
+    private void initBottomBar() {
+        final BottomBar bottomBar = (BottomBar) findViewById(R.id.bottomBar);
+
+        bottomBar.selectTabAtPosition(1);
+
+        bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
+            @Override
+            public void onTabSelected(@IdRes int tabId) {
+                if (tabId == R.id.tab_favourites) {
+                    Intent intent = new Intent(ReservationsActivity.this, FavouritesActivity.class);
+                    intent.putExtra("CUSTOMER_ID", 1L);
+                    startActivity(intent);
+                } else if (tabId == R.id.tab_map) {
+                    Intent intent = new Intent(ReservationsActivity.this, MapActivity.class);
+                    intent.putExtra("CUSTOMER_ID", 1L);
+                    startActivity(intent);
+                }
+            }
+        });
+    }
+
+    private void initRecyclerView() {
+        recyclerView = (RecyclerView) findViewById(R.id.activity_reservations_recycler_view);
+
+        mAdapter = new ReservationAdapter(chargerReservationList);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.addItemDecoration(new CustomDividerItemDecoration(this, LinearLayoutManager.VERTICAL, 16));
+
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT ) {
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                Toast.makeText(ReservationsActivity.this, "Deleted", Toast.LENGTH_SHORT).show();
+                final int position = viewHolder.getAdapterPosition();
+
+                ReservationDao reservationDao = mDaoSession.getReservationDao();
+
+                reservationDao.delete(chargerReservationList.get(position).getReservation());
+
+                chargerReservationList.remove(position);
+                mAdapter.notifyDataSetChanged();
+            }
+
+
+        };
+
+        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new RecyclerTouchListener.ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                Toast.makeText(getApplicationContext(), "Selected!", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(ReservationsActivity.this, MapActivity.class);
+                intent.putExtra("CHARGER_ID", Long.toString(chargerReservationList.get(position).getChargerPoint().getId()));
+                startActivity(intent);
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+            }
+        }));
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+
+        recyclerView.setAdapter(mAdapter);
     }
 }

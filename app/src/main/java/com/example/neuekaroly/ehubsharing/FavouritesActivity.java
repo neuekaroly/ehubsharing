@@ -14,6 +14,10 @@ import android.widget.Toast;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 
+import net.danlew.android.joda.JodaTimeAndroid;
+
+import org.joda.time.DateTime;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +30,8 @@ import database.DaoMaster;
 import database.DaoSession;
 import database.JoinCustomersWithChargerPoints;
 import database.JoinCustomersWithChargerPointsDao;
+import database.Reservation;
+import database.ReservationDao;
 
 public class FavouritesActivity extends AppCompatActivity {
     private List<ChargerPoint> chargerPointList = new ArrayList<>();
@@ -38,27 +44,30 @@ public class FavouritesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favourites);
 
+        JodaTimeAndroid.init(this);
+
         mDaoSession = new DaoMaster(new DaoMaster.DevOpenHelper(this, "charger.db").getWritableDb()).newSession();
 
-        final BottomBar bottomBar = (BottomBar) findViewById(R.id.bottomBar);
+        initBottomBar();
 
-        bottomBar.selectTabAtPosition(2);
+        initRecyclerView();
 
-        bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
-            @Override
-            public void onTabSelected(@IdRes int tabId) {
-                if (tabId == R.id.tab_map) {
-                    Intent intent = new Intent(FavouritesActivity.this, MapActivity.class);
-                    intent.putExtra("CUSTOMER_ID", 1L);
-                    startActivity(intent);
-                } else if (tabId == R.id.tab_reservations) {
-                    Intent intent = new Intent(FavouritesActivity.this, ReservationsActivity.class);
-                    intent.putExtra("CUSTOMER_ID", 1L);
-                    startActivity(intent);
-                }
-            }
-        });
+        prepareFavouritesData();
+    }
 
+    private void prepareFavouritesData() {
+        CustomerDao customerDao = mDaoSession.getCustomerDao();
+
+        List<ChargerPoint> chargerPointsWitThisCustomer = customerDao.load(1L).getChargerPointsWitThisCustomer();
+
+        for (int i = 0; i < chargerPointsWitThisCustomer.size(); i++) {
+            chargerPointList.add(chargerPointsWitThisCustomer.get(i));
+        }
+
+        mAdapter.notifyDataSetChanged();
+    }
+
+    private void initRecyclerView() {
         recyclerView = (RecyclerView) findViewById(R.id.activity_favourites_recycler_view);
 
         mAdapter = new FavouriteAdapter(chargerPointList);
@@ -76,7 +85,7 @@ public class FavouritesActivity extends AppCompatActivity {
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-                Toast.makeText(FavouritesActivity.this, "on Swiped ", Toast.LENGTH_SHORT).show();
+                Toast.makeText(FavouritesActivity.this, "Deleted", Toast.LENGTH_SHORT).show();
                 final int position = viewHolder.getAdapterPosition();
 
                 //TODO: REFACTOR THIS SPAGHETTI CODE
@@ -101,11 +110,9 @@ public class FavouritesActivity extends AppCompatActivity {
 
                 //TODO: END
 
-
                 chargerPointList.remove(position);
                 mAdapter.notifyDataSetChanged();
             }
-
 
         };
 
@@ -120,7 +127,6 @@ public class FavouritesActivity extends AppCompatActivity {
 
             @Override
             public void onLongClick(View view, int position) {
-
             }
         }));
 
@@ -128,19 +134,41 @@ public class FavouritesActivity extends AppCompatActivity {
         itemTouchHelper.attachToRecyclerView(recyclerView);
 
         recyclerView.setAdapter(mAdapter);
-
-        prepareFavouritesData();
     }
 
-    private void prepareFavouritesData() {
+    private void initBottomBar() {
+        final BottomBar bottomBar = (BottomBar) findViewById(R.id.bottomBar);
+
+        bottomBar.selectTabAtPosition(2);
+
+        bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
+            @Override
+            public void onTabSelected(@IdRes int tabId) {
+                if (tabId == R.id.tab_map) {
+                    Intent intent = new Intent(FavouritesActivity.this, MapActivity.class);
+                    intent.putExtra("CUSTOMER_ID", 1L);
+                    startActivity(intent);
+                } else if (tabId == R.id.tab_reservations) {
+                    updateReservationsByTime();
+                    Intent intent = new Intent(FavouritesActivity.this, ReservationsActivity.class);
+                    intent.putExtra("CUSTOMER_ID", 1L);
+                    startActivity(intent);
+                }
+            }
+        });
+    }
+
+    private void updateReservationsByTime() {
         CustomerDao customerDao = mDaoSession.getCustomerDao();
 
-        List<ChargerPoint> chargerPointsWitThisCustomer = customerDao.load(1L).getChargerPointsWitThisCustomer();
+        ReservationDao reservationDao = mDaoSession.getReservationDao();
 
-        for (int i = 0; i < chargerPointsWitThisCustomer.size(); i++) {
-            chargerPointList.add(chargerPointsWitThisCustomer.get(i));
+        List<Reservation> reservations = customerDao.load(1L).getReservations();
+
+        for (int i = 0; i < reservations.size(); i++) {
+            if(new DateTime(reservations.get(i).getFinishDate()).isBeforeNow()) {
+                reservationDao.delete(reservations.get(i));
+            }
         }
-
-        mAdapter.notifyDataSetChanged();
     }
 }
