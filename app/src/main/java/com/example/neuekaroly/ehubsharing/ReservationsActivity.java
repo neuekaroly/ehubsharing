@@ -8,16 +8,11 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
-
-import net.danlew.android.joda.JodaTimeAndroid;
-
-import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,15 +29,22 @@ import database.ReservationDao;
 import helpers.ChargerReservation;
 
 public class ReservationsActivity extends AppCompatActivity {
-    private List<ChargerReservation> chargerReservationList = new ArrayList<>();
-    private RecyclerView recyclerView;
+    private Long mCustomerId;
+
+    private List<ChargerReservation> mChargerReservationList = new ArrayList<>();
+
+    private RecyclerView mRecyclerView;
+
     private ReservationAdapter mAdapter;
+
     DaoSession mDaoSession;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reservations);
+
+        mCustomerId = Long.parseLong(getIntent().getStringExtra("CUSTOMER_ID"));
 
         mDaoSession = new DaoMaster(new DaoMaster.DevOpenHelper(this, "charger.db").getWritableDb()).newSession();
 
@@ -60,11 +62,11 @@ public class ReservationsActivity extends AppCompatActivity {
 
         ChargerPointDao chargerPointDao = mDaoSession.getChargerPointDao();
 
-        List<Reservation> reservations = customerDao.load(1L).getReservations();
+        List<Reservation> reservations = customerDao.load(mCustomerId).getReservations();
 
         for (int i = 0; i < reservations.size(); i++) {
             ChargerReservation chargerReservation = new ChargerReservation(reservations.get(i), chargerPointDao.load(reservations.get(i).getChargerPointId()));
-            chargerReservationList.add(chargerReservation);
+            mChargerReservationList.add(chargerReservation);
         }
 
         mAdapter.notifyDataSetChanged();
@@ -80,11 +82,10 @@ public class ReservationsActivity extends AppCompatActivity {
             public void onTabSelected(@IdRes int tabId) {
                 if (tabId == R.id.tab_favourites) {
                     Intent intent = new Intent(ReservationsActivity.this, FavouritesActivity.class);
-                    intent.putExtra("CUSTOMER_ID", 1L);
+                    intent.putExtra("CUSTOMER_ID", mCustomerId.toString());
                     startActivity(intent);
                 } else if (tabId == R.id.tab_map) {
                     Intent intent = new Intent(ReservationsActivity.this, MapActivity.class);
-                    intent.putExtra("CUSTOMER_ID", 1L);
                     startActivity(intent);
                 }
             }
@@ -92,13 +93,13 @@ public class ReservationsActivity extends AppCompatActivity {
     }
 
     private void initRecyclerView() {
-        recyclerView = (RecyclerView) findViewById(R.id.activity_reservations_recycler_view);
+        mRecyclerView = (RecyclerView) findViewById(R.id.activity_reservations_recycler_view);
 
-        mAdapter = new ReservationAdapter(chargerReservationList);
+        mAdapter = new ReservationAdapter(mChargerReservationList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.addItemDecoration(new CustomDividerItemDecoration(this, LinearLayoutManager.VERTICAL, 16));
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.addItemDecoration(new CustomDividerItemDecoration(this, LinearLayoutManager.VERTICAL, 16));
 
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT ) {
 
@@ -114,21 +115,21 @@ public class ReservationsActivity extends AppCompatActivity {
 
                 ReservationDao reservationDao = mDaoSession.getReservationDao();
 
-                reservationDao.delete(chargerReservationList.get(position).getReservation());
+                reservationDao.delete(mChargerReservationList.get(position).getReservation());
 
-                chargerReservationList.remove(position);
+                mChargerReservationList.remove(position);
                 mAdapter.notifyDataSetChanged();
             }
 
 
         };
 
-        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new RecyclerTouchListener.ClickListener() {
+        mRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), mRecyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
                 Toast.makeText(getApplicationContext(), "Selected!", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(ReservationsActivity.this, MapActivity.class);
-                intent.putExtra("CHARGER_ID", Long.toString(chargerReservationList.get(position).getChargerPoint().getId()));
+                intent.putExtra("CHARGER_ID", Long.toString(mChargerReservationList.get(position).getChargerPoint().getId()));
                 startActivity(intent);
             }
 
@@ -138,8 +139,8 @@ public class ReservationsActivity extends AppCompatActivity {
         }));
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
-        itemTouchHelper.attachToRecyclerView(recyclerView);
+        itemTouchHelper.attachToRecyclerView(mRecyclerView);
 
-        recyclerView.setAdapter(mAdapter);
+        mRecyclerView.setAdapter(mAdapter);
     }
 }

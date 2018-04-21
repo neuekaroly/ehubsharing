@@ -71,12 +71,12 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
             public void onTabSelected(@IdRes int tabId) {
                 if (tabId == R.id.tab_favourites) {
                     Intent intent = new Intent(MapActivity.this, FavouritesActivity.class);
-                    intent.putExtra("CUSTOMER_ID", 1L);
+                    intent.putExtra("CUSTOMER_ID", new Long(1L).toString());
                     startActivity(intent);
                 } else if (tabId == R.id.tab_reservations) {
                     updateReservationsByTime();
                     Intent intent = new Intent(MapActivity.this, ReservationsActivity.class);
-                    intent.putExtra("CUSTOMER_ID", 1L);
+                    intent.putExtra("CUSTOMER_ID", new Long(1L).toString());
                     startActivity(intent);
                 }
             }

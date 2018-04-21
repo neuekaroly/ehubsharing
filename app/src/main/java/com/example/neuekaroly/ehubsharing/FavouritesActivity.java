@@ -8,6 +8,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -34,9 +35,15 @@ import database.Reservation;
 import database.ReservationDao;
 
 public class FavouritesActivity extends AppCompatActivity {
-    private List<ChargerPoint> chargerPointList = new ArrayList<>();
-    private RecyclerView recyclerView;
+
+    private Long mCustomerId;
+
+    private List<ChargerPoint> mChargerPointList = new ArrayList<>();
+
+    private RecyclerView mRecyclerView;
+
     private FavouriteAdapter mAdapter;
+
     DaoSession mDaoSession;
 
     @Override
@@ -45,6 +52,8 @@ public class FavouritesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_favourites);
 
         JodaTimeAndroid.init(this);
+
+        mCustomerId = Long.parseLong(getIntent().getStringExtra("CUSTOMER_ID"));
 
         mDaoSession = new DaoMaster(new DaoMaster.DevOpenHelper(this, "charger.db").getWritableDb()).newSession();
 
@@ -58,23 +67,23 @@ public class FavouritesActivity extends AppCompatActivity {
     private void prepareFavouritesData() {
         CustomerDao customerDao = mDaoSession.getCustomerDao();
 
-        List<ChargerPoint> chargerPointsWitThisCustomer = customerDao.load(1L).getChargerPointsWitThisCustomer();
+        List<ChargerPoint> chargerPointsWitThisCustomer = customerDao.load(mCustomerId).getChargerPointsWitThisCustomer();
 
         for (int i = 0; i < chargerPointsWitThisCustomer.size(); i++) {
-            chargerPointList.add(chargerPointsWitThisCustomer.get(i));
+            mChargerPointList.add(chargerPointsWitThisCustomer.get(i));
         }
 
         mAdapter.notifyDataSetChanged();
     }
 
     private void initRecyclerView() {
-        recyclerView = (RecyclerView) findViewById(R.id.activity_favourites_recycler_view);
+        mRecyclerView = (RecyclerView) findViewById(R.id.activity_favourites_recycler_view);
 
-        mAdapter = new FavouriteAdapter(chargerPointList);
+        mAdapter = new FavouriteAdapter(mChargerPointList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.addItemDecoration(new CustomDividerItemDecoration(this, LinearLayoutManager.VERTICAL, 16));
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.addItemDecoration(new CustomDividerItemDecoration(this, LinearLayoutManager.VERTICAL, 16));
 
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT ) {
 
@@ -92,7 +101,7 @@ public class FavouritesActivity extends AppCompatActivity {
 
                 CustomerDao customerDao = mDaoSession.getCustomerDao();
 
-                List<ChargerPoint> chargerPointsWitThisCustomer = customerDao.load(1L).getChargerPointsWitThisCustomer();
+                List<ChargerPoint> chargerPointsWitThisCustomer = customerDao.load(mCustomerId).getChargerPointsWitThisCustomer();
 
                 Long deleteChargerId = chargerPointsWitThisCustomer.get(position).getId();
 
@@ -101,7 +110,7 @@ public class FavouritesActivity extends AppCompatActivity {
                 List<JoinCustomersWithChargerPoints> joinCustomersWithChargerPoints = joinCustomersWithChargerPointsDao.loadAll();
 
                 for (int i = 0; i < joinCustomersWithChargerPoints.size(); i++) {
-                    if(joinCustomersWithChargerPoints.get(i).getChargerPointId() == deleteChargerId && joinCustomersWithChargerPoints.get(i).getCustomerId() == 1L) {
+                    if(joinCustomersWithChargerPoints.get(i).getChargerPointId() == deleteChargerId && joinCustomersWithChargerPoints.get(i).getCustomerId() == mCustomerId) {
                         JoinCustomersWithChargerPoints deleteFavourite = joinCustomersWithChargerPoints.get(i);
                         joinCustomersWithChargerPointsDao.delete(deleteFavourite);
                         break;
@@ -110,18 +119,18 @@ public class FavouritesActivity extends AppCompatActivity {
 
                 //TODO: END
 
-                chargerPointList.remove(position);
+                mChargerPointList.remove(position);
                 mAdapter.notifyDataSetChanged();
             }
 
         };
 
-        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new RecyclerTouchListener.ClickListener() {
+        mRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), mRecyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                Toast.makeText(getApplicationContext(), chargerPointList.get(position).getId() + " is selected!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), mChargerPointList.get(position).getId() + " is selected!", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(FavouritesActivity.this, MapActivity.class);
-                intent.putExtra("CHARGER_ID", Long.toString(chargerPointList.get(position).getId()));
+                intent.putExtra("CHARGER_ID", Long.toString(mChargerPointList.get(position).getId()));
                 startActivity(intent);
             }
 
@@ -131,9 +140,9 @@ public class FavouritesActivity extends AppCompatActivity {
         }));
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
-        itemTouchHelper.attachToRecyclerView(recyclerView);
+        itemTouchHelper.attachToRecyclerView(mRecyclerView);
 
-        recyclerView.setAdapter(mAdapter);
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     private void initBottomBar() {
@@ -146,14 +155,14 @@ public class FavouritesActivity extends AppCompatActivity {
             public void onTabSelected(@IdRes int tabId) {
                 if (tabId == R.id.tab_map) {
                     Intent intent = new Intent(FavouritesActivity.this, MapActivity.class);
-                    intent.putExtra("CUSTOMER_ID", 1L);
                     startActivity(intent);
                 } else if (tabId == R.id.tab_reservations) {
                     updateReservationsByTime();
                     Intent intent = new Intent(FavouritesActivity.this, ReservationsActivity.class);
-                    intent.putExtra("CUSTOMER_ID", 1L);
+                    intent.putExtra("CUSTOMER_ID", mCustomerId.toString());
                     startActivity(intent);
                 }
+
             }
         });
     }
@@ -163,7 +172,7 @@ public class FavouritesActivity extends AppCompatActivity {
 
         ReservationDao reservationDao = mDaoSession.getReservationDao();
 
-        List<Reservation> reservations = customerDao.load(1L).getReservations();
+        List<Reservation> reservations = customerDao.load(mCustomerId).getReservations();
 
         for (int i = 0; i < reservations.size(); i++) {
             if(new DateTime(reservations.get(i).getFinishDate()).isBeforeNow()) {

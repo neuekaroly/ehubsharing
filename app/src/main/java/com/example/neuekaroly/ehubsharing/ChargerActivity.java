@@ -29,6 +29,7 @@ import database.DaoSession;
 import database.JoinCustomersWithChargerPoints;
 import database.JoinCustomersWithChargerPointsDao;
 import database.Reservation;
+import util.StringUtils;
 
 public class ChargerActivity extends AppCompatActivity {
 
@@ -81,16 +82,16 @@ public class ChargerActivity extends AppCompatActivity {
 
     private void initActivity() {
         TextView textView = (TextView) findViewById(R.id.activity_charger_adress_text_view);
-        textView.setText("Adress: " + mCharger.getAdress());
+        textView.setText("Adress:\n" + mCharger.getAdress());
 
         TextView textView2 = (TextView) findViewById(R.id.activity_charger_openinghours_text_view);
-        textView2.setText("Opening hours: " + mCharger.getOpeningHours());
+        textView2.setText("Opening hours:\n" + mCharger.getOpeningHours());
 
         textView = (TextView) findViewById(R.id.activity_charger_cost_text_view);
-        textView.setText("Cost: " + mCharger.getCost());
+        textView.setText("Cost:\n" + mCharger.getCost());
 
         textView = (TextView) findViewById(R.id.activity_charger_connectortypes_text_view);
-        textView.setText("Connector types: " + mCharger.getConnectorTypes());
+        textView.setText("Connector types:" + StringUtils.connectorTypesStringBuilder(mCharger.getConnectorTypes()));
 
         initFavouriteButton();
 
