@@ -170,17 +170,18 @@ public class ChargerActivity extends AppCompatActivity {
         bookingTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                Calendar now = Calendar.getInstance();
+                final Calendar now = Calendar.getInstance();
                 TimePickerDialog tpd = com.wdullaer.materialdatetimepicker.time.TimePickerDialog.newInstance(
                         new com.wdullaer.materialdatetimepicker.time.TimePickerDialog.OnTimeSetListener() {
                             @Override
                             public void onTimeSet(RadialPickerLayout view, int hourOfDay, int minute, int second) {
                                 Log.d("TEST", "TIME IS CHANGED");
 
-                                startDateTime = new DateTime(Calendar.YEAR,Calendar.MONTH,Calendar.DAY_OF_MONTH,hourOfDay,minute);
+                                startDateTime = new DateTime(now.get(Calendar.YEAR),now.get(Calendar.MONTH) + 1 ,now.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
 
                             }
                         }, now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE),true);
+
                 Timepoint timePoint = new Timepoint(23,0,0);
                 tpd.setMinTime(now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE), now.get(Calendar.SECOND));
                 tpd.setMaxTime(timePoint);
