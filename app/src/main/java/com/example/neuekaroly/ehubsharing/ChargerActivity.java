@@ -1,6 +1,8 @@
 package com.example.neuekaroly.ehubsharing;
 
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -43,7 +45,11 @@ public class ChargerActivity extends AppCompatActivity {
 
     DateTime startDateTime = null;
 
-    List<Reservation> reservations;
+    List<Reservation> mReservations;
+
+    private Handler mHandler;
+
+    TextView mTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +63,7 @@ public class ChargerActivity extends AppCompatActivity {
 
         mCharger = chargerPointDao.load(chargerPointId);
 
-        reservations = mCharger.getReservations();
+        mReservations = mCharger.getReservations();
 
         CustomerDao customerDao = mDaoSession.getCustomerDao();
 
@@ -78,7 +84,45 @@ public class ChargerActivity extends AppCompatActivity {
         });
 
         initActivity();
+
+        mTextView = (TextView) findViewById(R.id.activity_charger_availability_text_view);
+
+        mHandler = new Handler();
+
+        mHandler.postDelayed(m_Runnable, 1000);
     }
+
+    private final Runnable m_Runnable = new Runnable() {
+        public void run() {
+
+            for (int i = 0; i < mReservations.size(); i++) {
+                if(new DateTime(mReservations.get(i).getFinishDate()) == DateTime.now() || new DateTime(mReservations.get(i).getStartDate()) == DateTime.now()
+                        || (new DateTime(mReservations.get(i).getFinishDate()).isAfterNow() && new DateTime(mReservations.get(i).getStartDate()).isBeforeNow())) {
+                    mTextView.setText("IT'S NOT FREE");
+                    mTextView.setBackgroundColor(Color.RED);
+                } else {
+                    mTextView.setText("IT'S FREE");
+                    mTextView.setBackgroundColor(Color.GREEN);
+                }
+            }
+
+            if(mReservations.size() == 0) {
+                mTextView.setText("IT'S FREE");
+                mTextView.setBackgroundColor(Color.GREEN);
+            }
+
+
+            mHandler.postDelayed(m_Runnable, 5000);
+        }
+
+    };
+
+    @Override
+    public void onBackPressed() {
+            super.onBackPressed();
+            mHandler.removeCallbacks(m_Runnable);
+            return;
+        }
 
     private void initActivity() {
         TextView textView = (TextView) findViewById(R.id.activity_charger_adress_text_view);
@@ -126,9 +170,11 @@ public class ChargerActivity extends AppCompatActivity {
                         reservation.setFinishDate(endDateTime.toDate());
                         reservation.setChargerPointId(chargerPointId);
 
+                        mReservations.add(reservation);
+
                         mDaoSession.insert(reservation);
 
-                        reservations.add(reservation);
+                        mReservations.add(reservation);
 
                         Log.d("TEST", "ADDED NEW RESERVATION");
                     } else {
@@ -194,10 +240,10 @@ public class ChargerActivity extends AppCompatActivity {
 
     private boolean checkReservationTimeIsValid(DateTime newStartTime, DateTime newFinishTime) {
 
-        for (int i = 0; i < reservations.size(); i++) {
-            if((new DateTime(reservations.get(i).getStartDate()).isBefore(newStartTime) && newStartTime.isBefore(new DateTime(reservations.get(i).getFinishDate())))
-                    || (new DateTime(reservations.get(i).getStartDate()).isBefore(newFinishTime) && newFinishTime.isBefore(new DateTime(reservations.get(i).getFinishDate())))
-                    || startDateTime.isEqual(new DateTime(reservations.get(i).getStartDate()))) {
+        for (int i = 0; i < mReservations.size(); i++) {
+            if((new DateTime(mReservations.get(i).getStartDate()).isBefore(newStartTime) && newStartTime.isBefore(new DateTime(mReservations.get(i).getFinishDate())))
+                    || (new DateTime(mReservations.get(i).getStartDate()).isBefore(newFinishTime) && newFinishTime.isBefore(new DateTime(mReservations.get(i).getFinishDate())))
+                    || startDateTime.isEqual(new DateTime(mReservations.get(i).getStartDate()))) {
                 return false;
             }
         }
