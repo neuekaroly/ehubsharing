@@ -36,9 +36,9 @@ public class SplashActivity extends AppCompatActivity {
 
     private static int SPLASH_TIME_OUT = 3000;
 
-    private static final String TAG = "SplashActivity";
-
     private static final int ERROR_DIALOG_REQUEST = 9001;
+
+    public static DaoSession mDaoSession;
 
     SharedPreferences sharedPreferences = null;
 
@@ -47,6 +47,8 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         sharedPreferences = getSharedPreferences("com.example.neuekaroly.ehubsharing", MODE_PRIVATE);
+
+        mDaoSession = new DaoMaster(new DaoMaster.DevOpenHelper(this, "charger.db").getWritableDb()).newSession();
 
         Stetho.initializeWithDefaults(this);
 
@@ -73,7 +75,7 @@ public class SplashActivity extends AppCompatActivity {
         super.onResume();
 
         if (sharedPreferences.getBoolean("firstrun", true)) {
-            Log.d("TEST", "FIRSTRUN");
+            Log.d("TEST", getString(R.string.splash_activity_first_run_msg));
 
             fillUpDatabase();
 
@@ -86,7 +88,7 @@ public class SplashActivity extends AppCompatActivity {
         try {
             reader = new BufferedReader(new InputStreamReader(getAssets().open("chargers.txt"), "UTF-8"));
         } catch(IOException e) {
-            Log.d("Test", e.toString());
+            Log.d("TEST", e.toString());
         }
 
         LinkedList<ChargerPoint> list = new LinkedList<>(
@@ -95,7 +97,7 @@ public class SplashActivity extends AppCompatActivity {
                 )
         );
 
-        DaoSession mDaoSession = new DaoMaster(new DaoMaster.DevOpenHelper(this, "charger.db").getWritableDb()).newSession();
+        mDaoSession = new DaoMaster(new DaoMaster.DevOpenHelper(this, "charger.db").getWritableDb()).newSession();
         ChargerPointDao chargerPointDao = mDaoSession.getChargerPointDao();
 
         for (int i = 0; i < list.size(); i++) {
@@ -109,20 +111,21 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     public boolean isServicesOk() {
-        Log.d(TAG, "isServicesOk: checking google services version");
+        String TAG = getString(R.string.splash_actvitiy_name);
+        Log.d(TAG, getString(R.string.splash_activity_google_services_check_msg));
 
         int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(SplashActivity.this);
 
         if(available == ConnectionResult.SUCCESS) {
-            Log.d(TAG, "isServicesOk: Google Play Services is working");
+            Log.d(TAG, getString(R.string.splash_activity_google_services_working_msg));
             return true;
         }
         else if(GoogleApiAvailability.getInstance().isUserResolvableError(available)) {
-            Log.d(TAG, "isServicesOk: an error occured but we can fix it");
+            Log.d(TAG, getString(R.string.splash_activity_google_services_not_working_msg));
             Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(SplashActivity.this, available, ERROR_DIALOG_REQUEST);
             dialog.show();
         } else {
-            Toast.makeText(this, "You can't make map requests", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.splash_activity_google_map_not_work, Toast.LENGTH_SHORT).show();
         }
         return false;
     }

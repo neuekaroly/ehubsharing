@@ -2,15 +2,19 @@ package com.example.neuekaroly.ehubsharing;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.IdRes;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 
@@ -18,6 +22,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -44,7 +49,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
 
     private GoogleMap mMap;
 
-    private DaoSession mDaoSession;
+    //private DaoSession mDaoSession;
 
     private Long mCameraPosition = -1L;
 
@@ -55,7 +60,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
 
         JodaTimeAndroid.init(this);
 
-        mDaoSession = new DaoMaster(new DaoMaster.DevOpenHelper(this, "charger.db").getWritableDb()).newSession();
+        //mDaoSession = new DaoMaster(new DaoMaster.DevOpenHelper(this, "charger.db").getWritableDb()).newSession();
 
         setContentView(R.layout.activity_map);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -132,17 +137,15 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                 }
             });
         }
-
-        //mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mapBounds, 40));
     }
 
     private void addMarkersToMap() {
 
-            ChargerPointDao chargerPointDao = mDaoSession.getChargerPointDao();
+            ChargerPointDao chargerPointDao = SplashActivity.mDaoSession.getChargerPointDao();
 
             List<ChargerPoint> chargerPoints = chargerPointDao.loadAll();
 
-            Bitmap icon = BitmapFactory.decodeResource(this.getResources(), R.drawable.black_charger);
+            BitmapDescriptor bitmapDescriptor = bitmapDescriptorFromVector(this, R.drawable.ic_map_marker);
 
             for (int i = 0; i < chargerPoints.size(); i++) {
                 MarkerOptions markerOptions = new MarkerOptions()
@@ -150,7 +153,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                         .title(chargerPoints.get(i).getName())
                         .snippet(chargerPoints.get(i).getOpeningHours())
                         .flat(true)
-                        .icon(BitmapDescriptorFactory.fromBitmap(icon));
+                        .icon(bitmapDescriptor);
                 mMap.addMarker(markerOptions);
                 if(mCameraPosition != -1L) {
                     if(chargerPoints.get(i).getId() == mCameraPosition) {
@@ -160,10 +163,19 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         }
     }
 
-    private void updateReservationsByTime() {
-        CustomerDao customerDao = mDaoSession.getCustomerDao();
+    private BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId) {
+        Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
+        vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }
 
-        ReservationDao reservationDao = mDaoSession.getReservationDao();
+    private void updateReservationsByTime() {
+        CustomerDao customerDao = SplashActivity.mDaoSession.getCustomerDao();
+
+        ReservationDao reservationDao = SplashActivity.mDaoSession.getReservationDao();
 
         List<Reservation> reservations = customerDao.load(1L).getReservations();
 

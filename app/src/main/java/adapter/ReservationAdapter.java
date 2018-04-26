@@ -9,6 +9,8 @@ import android.widget.TextView;
 import com.example.neuekaroly.ehubsharing.R;
 
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.util.List;
 
@@ -53,10 +55,12 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
     public void onBindViewHolder(MyViewHolder holder, int position) {
         ChargerReservation chargerReservation = chargerReservationList.get(position);
 
+        DateTimeFormatter dtf = DateTimeFormat.forPattern("MM/dd/yyyy HH:mm");
+
         holder.chargerName.setText(chargerReservation.getChargerPoint().getName());
         holder.chargerAdress.setText(chargerReservation.getChargerPoint().getAdress());
-        holder.startTime.setText(new DateTime(chargerReservation.getReservation().getStartDate()).toString());
-        holder.endTime.setText(new DateTime(chargerReservation.getReservation().getFinishDate()).toString());
+        holder.startTime.setText("Start time: " + dtf.print((new DateTime(chargerReservation.getReservation().getStartDate()))));
+        holder.endTime.setText("End time: " + dtf.print((new DateTime(chargerReservation.getReservation().getFinishDate()))));
     }
 
     @Override

@@ -22,4 +22,12 @@ public class StringUtils {
 
         return stringBuilder.toString();
     }
+
+    public static String chargerCostStringTransformer(int cost) {
+        if(cost == 0) {
+            return "Free";
+        } else {
+            return cost + " " + "Ft";
+        }
+    }
 }

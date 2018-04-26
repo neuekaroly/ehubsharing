@@ -20,4 +20,10 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+    <string name="splash_actvitiy_name">SplashActivity</string>
+    <string name="splash_activity_google_services_check_msg">isServicesOk: checking google services version</string>
+    <string name="splash_activity_google_services_working_msg">isServicesOk: Google Play Services is working</string>
+    <string name="splash_activity_google_services_not_working_msg">isServicesOk: an error occured but we can fix it</string>
+    <string name="splash_activity_google_map_not_work">You can\'t make map requests</string>
+    <string name="splash_activity_first_run_msg">FIRST RUN</string>
 </resources>

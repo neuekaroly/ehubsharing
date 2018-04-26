@@ -3,4 +3,12 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="activity_charger_content_card_view_card_corner_radius">6dp</dimen>
+    <dimen name="activity_charger_content_card_view_layout_margin">4dp</dimen>
+    <dimen name="activity_charger_adress_text_view_layout_margin">4dp</dimen>
+    <dimen name="activity_charger_opening_hours_text_view_layout_margin">4dp</dimen>
+    <dimen name="activity_charger_cost_text_view_layout_margin">4dp</dimen>
+    <dimen name="activity_charger_connector_types_text_view_layout_margin">4dp</dimen>
+    <dimen name="activity_charger_content_card_view_divider_layout_margin_left">4dp</dimen>
+    <dimen name="activity_charger_content_card_view_divider_layout_margin_right">4dp</dimen>
 </resources>

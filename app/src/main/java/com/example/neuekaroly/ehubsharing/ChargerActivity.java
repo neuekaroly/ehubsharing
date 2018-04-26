@@ -57,6 +57,7 @@ public class ChargerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_charger);
 
         mDaoSession = new DaoMaster(new DaoMaster.DevOpenHelper(this, "charger.db").getWritableDb()).newSession();
+
         ChargerPointDao chargerPointDao = mDaoSession.getChargerPointDao();
 
         chargerPointId = Long.parseLong(getIntent().getStringExtra("CHARGER_ID")) + 1;
@@ -98,16 +99,16 @@ public class ChargerActivity extends AppCompatActivity {
             for (int i = 0; i < mReservations.size(); i++) {
                 if(new DateTime(mReservations.get(i).getFinishDate()) == DateTime.now() || new DateTime(mReservations.get(i).getStartDate()) == DateTime.now()
                         || (new DateTime(mReservations.get(i).getFinishDate()).isAfterNow() && new DateTime(mReservations.get(i).getStartDate()).isBeforeNow())) {
-                    mTextView.setText("IT'S NOT FREE");
+                    mTextView.setText("IT'S NOT FREE NOW");
                     mTextView.setBackgroundColor(Color.RED);
                 } else {
-                    mTextView.setText("IT'S FREE");
+                    mTextView.setText("IT'S FREE NOW");
                     mTextView.setBackgroundColor(Color.GREEN);
                 }
             }
 
             if(mReservations.size() == 0) {
-                mTextView.setText("IT'S FREE");
+                mTextView.setText("IT'S FREE NOW");
                 mTextView.setBackgroundColor(Color.GREEN);
             }
 
@@ -128,13 +129,13 @@ public class ChargerActivity extends AppCompatActivity {
         TextView textView = (TextView) findViewById(R.id.activity_charger_adress_text_view);
         textView.setText("Adress:\n" + mCharger.getAdress());
 
-        TextView textView2 = (TextView) findViewById(R.id.activity_charger_openinghours_text_view);
+        TextView textView2 = (TextView) findViewById(R.id.activity_charger_opening_hours_text_view);
         textView2.setText("Opening hours:\n" + mCharger.getOpeningHours());
 
         textView = (TextView) findViewById(R.id.activity_charger_cost_text_view);
-        textView.setText("Cost:\n" + mCharger.getCost());
+        textView.setText("Cost:\n" + StringUtils.chargerCostStringTransformer(mCharger.getCost()));
 
-        textView = (TextView) findViewById(R.id.activity_charger_connectortypes_text_view);
+        textView = (TextView) findViewById(R.id.activity_charger_connector_types_text_view);
         textView.setText("Connector types:" + StringUtils.connectorTypesStringBuilder(mCharger.getConnectorTypes()));
 
         initFavouriteButton();
