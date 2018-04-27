@@ -26,4 +26,5 @@
     <string name="splash_activity_google_services_not_working_msg">isServicesOk: an error occured but we can fix it</string>
     <string name="splash_activity_google_map_not_work">You can\'t make map requests</string>
     <string name="splash_activity_first_run_msg">FIRST RUN</string>
+    <string name="sucessfull_reservation">Successful reservation</string>
 </resources>

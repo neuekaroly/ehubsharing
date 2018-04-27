@@ -178,6 +178,9 @@ public class ChargerActivity extends AppCompatActivity {
                         mReservations.add(reservation);
 
                         Log.d("TEST", "ADDED NEW RESERVATION");
+
+                        Toast.makeText(getApplicationContext(), getString(R.string.sucessfull_reservation), Toast.LENGTH_LONG).show();
+
                     } else {
                         Toast.makeText(getApplicationContext(),getString(R.string.not_valid_the_selected_starttime_string), Toast.LENGTH_LONG).show();
                     }

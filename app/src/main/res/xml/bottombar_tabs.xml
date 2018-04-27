@@ -11,4 +11,9 @@
         id="@+id/tab_favourites"
         icon="@mipmap/ic_favourite"
         title="Favourites" />
+
+    <tab
+        id="@+id/tab_search"
+        icon="@mipmap/ic_search"
+        title="Search" />
 </tabs>

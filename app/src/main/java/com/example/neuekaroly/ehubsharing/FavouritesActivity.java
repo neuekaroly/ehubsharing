@@ -53,7 +53,7 @@ public class FavouritesActivity extends AppCompatActivity {
 
         JodaTimeAndroid.init(this);
 
-        mCustomerId = Long.parseLong(getIntent().getStringExtra("CUSTOMER_ID"));
+        mCustomerId = SplashActivity.customerId;
 
         mDaoSession = new DaoMaster(new DaoMaster.DevOpenHelper(this, "charger.db").getWritableDb()).newSession();
 
@@ -159,7 +159,9 @@ public class FavouritesActivity extends AppCompatActivity {
                 } else if (tabId == R.id.tab_reservations) {
                     updateReservationsByTime();
                     Intent intent = new Intent(FavouritesActivity.this, ReservationsActivity.class);
-                    intent.putExtra("CUSTOMER_ID", mCustomerId.toString());
+                    startActivity(intent);
+                } else if (tabId == R.id.tab_search) {
+                    Intent intent = new Intent(FavouritesActivity.this, SearchActivity.class);
                     startActivity(intent);
                 }
 

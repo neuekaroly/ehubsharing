@@ -42,6 +42,8 @@ public class SplashActivity extends AppCompatActivity {
 
     SharedPreferences sharedPreferences = null;
 
+    public static Long customerId = 1L;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

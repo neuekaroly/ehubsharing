@@ -44,10 +44,9 @@ public class ReservationsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reservations);
 
-        mCustomerId = Long.parseLong(getIntent().getStringExtra("CUSTOMER_ID"));
+        mCustomerId = SplashActivity.customerId;
 
         mDaoSession = new DaoMaster(new DaoMaster.DevOpenHelper(this, "charger.db").getWritableDb()).newSession();
-
 
         initBottomBar();
 
@@ -82,10 +81,12 @@ public class ReservationsActivity extends AppCompatActivity {
             public void onTabSelected(@IdRes int tabId) {
                 if (tabId == R.id.tab_favourites) {
                     Intent intent = new Intent(ReservationsActivity.this, FavouritesActivity.class);
-                    intent.putExtra("CUSTOMER_ID", mCustomerId.toString());
                     startActivity(intent);
                 } else if (tabId == R.id.tab_map) {
                     Intent intent = new Intent(ReservationsActivity.this, MapActivity.class);
+                    startActivity(intent);
+                } else if (tabId == R.id.tab_search) {
+                    Intent intent = new Intent(ReservationsActivity.this, SearchActivity.class);
                     startActivity(intent);
                 }
             }
