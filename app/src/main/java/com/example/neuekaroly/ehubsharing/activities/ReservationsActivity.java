@@ -18,7 +18,7 @@ import com.roughike.bottombar.OnTabSelectListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.neuekaroly.ehubsharing.adapter.ReservationAdapter;
+import com.example.neuekaroly.ehubsharing.adapters.ReservationAdapter;
 import com.example.neuekaroly.ehubsharing.customitems.CustomDividerItemDecoration;
 import com.example.neuekaroly.ehubsharing.helpers.RecyclerTouchListener;
 import com.example.neuekaroly.ehubsharing.database.ChargerPointDao;

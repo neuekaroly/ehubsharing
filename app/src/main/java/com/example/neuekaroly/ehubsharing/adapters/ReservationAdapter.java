@@ -1,4 +1,4 @@
-package com.example.neuekaroly.ehubsharing.adapter;
+package com.example.neuekaroly.ehubsharing.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;

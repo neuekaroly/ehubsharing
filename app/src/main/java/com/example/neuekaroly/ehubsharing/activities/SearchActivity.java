@@ -23,7 +23,7 @@ import com.roughike.bottombar.OnTabSelectListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.neuekaroly.ehubsharing.adapter.SearchChargerAdapter;
+import com.example.neuekaroly.ehubsharing.adapters.SearchChargerAdapter;
 import com.example.neuekaroly.ehubsharing.helpers.RecyclerTouchListener;
 import com.example.neuekaroly.ehubsharing.database.ChargerPoint;
 import com.example.neuekaroly.ehubsharing.database.DaoMaster;

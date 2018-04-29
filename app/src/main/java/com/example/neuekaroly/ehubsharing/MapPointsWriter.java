@@ -1,4 +1,4 @@
-package com.example.neuekaroly.ehubsharing.activities;
+package com.example.neuekaroly.ehubsharing;
 
 import android.os.Build;
 import android.support.annotation.RequiresApi;

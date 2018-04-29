@@ -22,7 +22,7 @@ import org.joda.time.DateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.neuekaroly.ehubsharing.adapter.FavouriteAdapter;
+import com.example.neuekaroly.ehubsharing.adapters.FavouriteAdapter;
 import com.example.neuekaroly.ehubsharing.customitems.CustomDividerItemDecoration;
 import com.example.neuekaroly.ehubsharing.helpers.RecyclerTouchListener;
 import com.example.neuekaroly.ehubsharing.database.ChargerPoint;
