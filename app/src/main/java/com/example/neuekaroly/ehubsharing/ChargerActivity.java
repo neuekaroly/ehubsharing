@@ -101,6 +101,7 @@ public class ChargerActivity extends AppCompatActivity {
                         || (new DateTime(mReservations.get(i).getFinishDate()).isAfterNow() && new DateTime(mReservations.get(i).getStartDate()).isBeforeNow())) {
                     mTextView.setText("IT'S NOT FREE NOW");
                     mTextView.setBackgroundColor(Color.RED);
+                    break;
                 } else {
                     mTextView.setText("IT'S FREE NOW");
                     mTextView.setBackgroundColor(Color.GREEN);
@@ -111,7 +112,6 @@ public class ChargerActivity extends AppCompatActivity {
                 mTextView.setText("IT'S FREE NOW");
                 mTextView.setBackgroundColor(Color.GREEN);
             }
-
 
             mHandler.postDelayed(m_Runnable, 5000);
         }
