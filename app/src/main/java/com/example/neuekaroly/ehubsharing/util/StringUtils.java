@@ -1,4 +1,4 @@
-package util;
+package com.example.neuekaroly.ehubsharing.util;
 
 import org.apache.commons.collections4.CollectionUtils;
 

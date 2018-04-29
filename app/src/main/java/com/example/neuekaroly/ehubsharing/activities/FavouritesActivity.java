@@ -1,4 +1,4 @@
-package com.example.neuekaroly.ehubsharing;
+package com.example.neuekaroly.ehubsharing.activities;
 
 import android.content.Intent;
 import android.support.annotation.IdRes;
@@ -8,10 +8,10 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.neuekaroly.ehubsharing.R;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 
@@ -22,17 +22,17 @@ import org.joda.time.DateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import adapter.FavouriteAdapter;
-import customitems.CustomDividerItemDecoration;
-import customitems.RecyclerTouchListener;
-import database.ChargerPoint;
-import database.CustomerDao;
-import database.DaoMaster;
-import database.DaoSession;
-import database.JoinCustomersWithChargerPoints;
-import database.JoinCustomersWithChargerPointsDao;
-import database.Reservation;
-import database.ReservationDao;
+import com.example.neuekaroly.ehubsharing.adapter.FavouriteAdapter;
+import com.example.neuekaroly.ehubsharing.customitems.CustomDividerItemDecoration;
+import com.example.neuekaroly.ehubsharing.helpers.RecyclerTouchListener;
+import com.example.neuekaroly.ehubsharing.database.ChargerPoint;
+import com.example.neuekaroly.ehubsharing.database.CustomerDao;
+import com.example.neuekaroly.ehubsharing.database.DaoMaster;
+import com.example.neuekaroly.ehubsharing.database.DaoSession;
+import com.example.neuekaroly.ehubsharing.database.JoinCustomersWithChargerPoints;
+import com.example.neuekaroly.ehubsharing.database.JoinCustomersWithChargerPointsDao;
+import com.example.neuekaroly.ehubsharing.database.Reservation;
+import com.example.neuekaroly.ehubsharing.database.ReservationDao;
 
 public class FavouritesActivity extends AppCompatActivity {
 

@@ -1,4 +1,4 @@
-package com.example.neuekaroly.ehubsharing;
+package com.example.neuekaroly.ehubsharing.activities;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,17 +16,18 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.neuekaroly.ehubsharing.R;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import adapter.SearchChargerAdapter;
-import customitems.RecyclerTouchListener;
-import database.ChargerPoint;
-import database.DaoMaster;
-import database.DaoSession;
+import com.example.neuekaroly.ehubsharing.adapter.SearchChargerAdapter;
+import com.example.neuekaroly.ehubsharing.helpers.RecyclerTouchListener;
+import com.example.neuekaroly.ehubsharing.database.ChargerPoint;
+import com.example.neuekaroly.ehubsharing.database.DaoMaster;
+import com.example.neuekaroly.ehubsharing.database.DaoSession;
 
 public class SearchActivity extends AppCompatActivity {
     SearchView mSearchView;
@@ -140,7 +140,7 @@ public class SearchActivity extends AppCompatActivity {
 
             final String adress = model.getAdress().toLowerCase();
 
-            if (name.startsWith(query) || adress.startsWith(query))
+            if (name.contains(query) || adress.contains(query))
             {
                 filteredModeList.add(model);
             }

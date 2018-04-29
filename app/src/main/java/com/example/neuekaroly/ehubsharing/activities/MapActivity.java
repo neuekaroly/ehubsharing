@@ -1,14 +1,10 @@
-package com.example.neuekaroly.ehubsharing;
+package com.example.neuekaroly.ehubsharing.activities;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.IdRes;
 import android.support.annotation.RequiresApi;
@@ -16,8 +12,8 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.View;
 
+import com.example.neuekaroly.ehubsharing.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -37,13 +33,11 @@ import org.joda.time.DateTime;
 
 import java.util.List;
 
-import database.ChargerPoint;
-import database.ChargerPointDao;
-import database.CustomerDao;
-import database.DaoMaster;
-import database.DaoSession;
-import database.Reservation;
-import database.ReservationDao;
+import com.example.neuekaroly.ehubsharing.database.ChargerPoint;
+import com.example.neuekaroly.ehubsharing.database.ChargerPointDao;
+import com.example.neuekaroly.ehubsharing.database.CustomerDao;
+import com.example.neuekaroly.ehubsharing.database.Reservation;
+import com.example.neuekaroly.ehubsharing.database.ReservationDao;
 
 public class MapActivity extends FragmentActivity implements OnMapReadyCallback {
 

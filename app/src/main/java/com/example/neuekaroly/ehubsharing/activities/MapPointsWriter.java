@@ -1,4 +1,4 @@
-package com.example.neuekaroly.ehubsharing;
+package com.example.neuekaroly.ehubsharing.activities;
 
 import android.os.Build;
 import android.support.annotation.RequiresApi;
@@ -10,7 +10,7 @@ import com.google.gson.Gson;
 import java.util.LinkedList;
 import java.util.List;
 
-import database.ChargerPoint;
+import com.example.neuekaroly.ehubsharing.database.ChargerPoint;
 
 /**
  * Created by neue.karoly on 2018.03.31..

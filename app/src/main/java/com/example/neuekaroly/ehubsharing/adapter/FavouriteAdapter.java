@@ -1,7 +1,6 @@
-package adapter;
+package com.example.neuekaroly.ehubsharing.adapter;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +10,7 @@ import com.example.neuekaroly.ehubsharing.R;
 
 import java.util.List;
 
-import database.ChargerPoint;
+import com.example.neuekaroly.ehubsharing.database.ChargerPoint;
 
 public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.MyViewHolder>{
     private List<ChargerPoint> favouritesList;

@@ -1,4 +1,4 @@
-package com.example.neuekaroly.ehubsharing;
+package com.example.neuekaroly.ehubsharing.activities;
 
 import android.app.Dialog;
 import android.content.Intent;
@@ -11,6 +11,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.example.neuekaroly.ehubsharing.R;
 import com.facebook.stetho.Stetho;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -25,12 +26,12 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import database.ChargerPoint;
-import database.ChargerPointDao;
-import database.Customer;
-import database.CustomerDao;
-import database.DaoMaster;
-import database.DaoSession;
+import com.example.neuekaroly.ehubsharing.database.ChargerPoint;
+import com.example.neuekaroly.ehubsharing.database.ChargerPointDao;
+import com.example.neuekaroly.ehubsharing.database.Customer;
+import com.example.neuekaroly.ehubsharing.database.CustomerDao;
+import com.example.neuekaroly.ehubsharing.database.DaoMaster;
+import com.example.neuekaroly.ehubsharing.database.DaoSession;
 
 public class SplashActivity extends AppCompatActivity {
 

@@ -1,4 +1,4 @@
-package database;
+package com.example.neuekaroly.ehubsharing.database;
 
 import java.util.List;
 import android.database.Cursor;

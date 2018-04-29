@@ -1,4 +1,4 @@
-package com.example.neuekaroly.ehubsharing;
+package com.example.neuekaroly.ehubsharing.activities;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -13,6 +13,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.neuekaroly.ehubsharing.R;
 import com.wdullaer.materialdatetimepicker.time.RadialPickerLayout;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 import com.wdullaer.materialdatetimepicker.time.Timepoint;
@@ -22,16 +23,16 @@ import org.joda.time.DateTime;
 import java.util.Calendar;
 import java.util.List;
 
-import database.ChargerPoint;
-import database.ChargerPointDao;
-import database.Customer;
-import database.CustomerDao;
-import database.DaoMaster;
-import database.DaoSession;
-import database.JoinCustomersWithChargerPoints;
-import database.JoinCustomersWithChargerPointsDao;
-import database.Reservation;
-import util.StringUtils;
+import com.example.neuekaroly.ehubsharing.database.ChargerPoint;
+import com.example.neuekaroly.ehubsharing.database.ChargerPointDao;
+import com.example.neuekaroly.ehubsharing.database.Customer;
+import com.example.neuekaroly.ehubsharing.database.CustomerDao;
+import com.example.neuekaroly.ehubsharing.database.DaoMaster;
+import com.example.neuekaroly.ehubsharing.database.DaoSession;
+import com.example.neuekaroly.ehubsharing.database.JoinCustomersWithChargerPoints;
+import com.example.neuekaroly.ehubsharing.database.JoinCustomersWithChargerPointsDao;
+import com.example.neuekaroly.ehubsharing.database.Reservation;
+import com.example.neuekaroly.ehubsharing.util.StringUtils;
 
 public class ChargerActivity extends AppCompatActivity {
 

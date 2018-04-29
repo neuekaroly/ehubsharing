@@ -24,9 +24,9 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity android:name=".SearchActivity"/>
+        <activity android:name=".activities.SearchActivity"/>
 
-        <activity android:name=".SplashActivity">
+        <activity android:name=".activities.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -34,15 +34,13 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".MainActivity" />
-
-        <activity android:name=".MapActivity" />
+        <activity android:name=".activities.MapActivity" />
         <activity
-            android:name=".ChargerActivity"
+            android:name=".activities.ChargerActivity"
             android:label="@string/title_activity_charger"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".FavouritesActivity" />
-        <activity android:name=".ReservationsActivity" />
+        <activity android:name=".activities.FavouritesActivity" />
+        <activity android:name=".activities.ReservationsActivity" />
     </application>
 
 </manifest>

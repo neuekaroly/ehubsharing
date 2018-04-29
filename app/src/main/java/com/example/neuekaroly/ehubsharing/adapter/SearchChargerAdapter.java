@@ -1,11 +1,10 @@
-package adapter;
+package com.example.neuekaroly.ehubsharing.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,7 +13,7 @@ import com.example.neuekaroly.ehubsharing.R;
 import java.util.ArrayList;
 import java.util.List;
 
-import database.ChargerPoint;
+import com.example.neuekaroly.ehubsharing.database.ChargerPoint;
 
 public class SearchChargerAdapter  extends RecyclerView.Adapter<SearchChargerAdapter.Holderview>{
     private List<ChargerPoint> mChargerPointList;

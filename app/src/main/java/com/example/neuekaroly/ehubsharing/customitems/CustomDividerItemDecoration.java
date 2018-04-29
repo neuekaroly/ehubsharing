@@ -1,4 +1,4 @@
-package customitems;
+package com.example.neuekaroly.ehubsharing.customitems;
 
 import android.content.Context;
 import android.content.res.Resources;

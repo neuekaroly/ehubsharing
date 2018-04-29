@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="5dp"
-    tools:context="com.example.neuekaroly.ehubsharing.SearchActivity">
+    tools:context="com.example.neuekaroly.ehubsharing.activities.SearchActivity">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/search_actitivity_recycler_view"

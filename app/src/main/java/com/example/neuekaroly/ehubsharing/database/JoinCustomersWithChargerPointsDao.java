@@ -1,4 +1,4 @@
-package database;
+package com.example.neuekaroly.ehubsharing.database;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteStatement;

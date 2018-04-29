@@ -1,4 +1,4 @@
-package database;
+package com.example.neuekaroly.ehubsharing.database;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;

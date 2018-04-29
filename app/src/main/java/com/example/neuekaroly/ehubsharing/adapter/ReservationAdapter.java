@@ -1,4 +1,4 @@
-package adapter;
+package com.example.neuekaroly.ehubsharing.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,8 +14,7 @@ import org.joda.time.format.DateTimeFormatter;
 
 import java.util.List;
 
-import database.Reservation;
-import helpers.ChargerReservation;
+import com.example.neuekaroly.ehubsharing.helpers.ChargerReservation;
 
 /**
  * Created by neue.karoly on 2018.04.20..

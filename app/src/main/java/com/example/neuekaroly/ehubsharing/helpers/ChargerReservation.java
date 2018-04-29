@@ -1,8 +1,8 @@
-package helpers;
+package com.example.neuekaroly.ehubsharing.helpers;
 
 
-import database.ChargerPoint;
-import database.Reservation;
+import com.example.neuekaroly.ehubsharing.database.ChargerPoint;
+import com.example.neuekaroly.ehubsharing.database.Reservation;
 
 public class ChargerReservation {
     private ChargerPoint chargerPoint;

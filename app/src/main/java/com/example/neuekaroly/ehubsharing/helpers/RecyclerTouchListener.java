@@ -1,4 +1,4 @@
-package customitems;
+package com.example.neuekaroly.ehubsharing.helpers;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
