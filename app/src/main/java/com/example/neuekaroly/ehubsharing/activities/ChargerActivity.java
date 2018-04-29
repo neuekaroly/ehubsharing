@@ -6,7 +6,6 @@ import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -34,6 +33,10 @@ import com.example.neuekaroly.ehubsharing.database.JoinCustomersWithChargerPoint
 import com.example.neuekaroly.ehubsharing.database.Reservation;
 import com.example.neuekaroly.ehubsharing.util.StringUtils;
 
+
+/**
+ * This Activity shows the information about an electric charger
+ */
 public class ChargerActivity extends AppCompatActivity {
 
     DaoSession mDaoSession;
@@ -42,9 +45,9 @@ public class ChargerActivity extends AppCompatActivity {
 
     Customer mCustomer;
 
-    Long chargerPointId;
+    Long mChargerPointId;
 
-    DateTime startDateTime = null;
+    DateTime mStartDateTime = null;
 
     List<Reservation> mReservations;
 
@@ -56,34 +59,6 @@ public class ChargerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_charger);
-
-        mDaoSession = new DaoMaster(new DaoMaster.DevOpenHelper(this, "charger.db").getWritableDb()).newSession();
-
-        ChargerPointDao chargerPointDao = mDaoSession.getChargerPointDao();
-
-        chargerPointId = Long.parseLong(getIntent().getStringExtra("CHARGER_ID")) + 1;
-
-        mCharger = chargerPointDao.load(chargerPointId);
-
-        mReservations = mCharger.getReservations();
-
-        CustomerDao customerDao = mDaoSession.getCustomerDao();
-
-        mCustomer = customerDao.load(1L);
-
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle(mCharger.getName());
-        setSupportActionBar(toolbar);
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
 
         initActivity();
 
@@ -127,17 +102,21 @@ public class ChargerActivity extends AppCompatActivity {
         }
 
     private void initActivity() {
+        initDataBase();
+
+        initToolbar();
+
         TextView textView = (TextView) findViewById(R.id.activity_charger_adress_text_view);
-        textView.setText("Adress:\n" + mCharger.getAdress());
+        textView.setText(getString(R.string.charger_activity_adress_text_view_text) + mCharger.getAdress());
 
         TextView textView2 = (TextView) findViewById(R.id.activity_charger_opening_hours_text_view);
-        textView2.setText("Opening hours:\n" + mCharger.getOpeningHours());
+        textView2.setText(getString(R.string.charger_activity_opening_hours_text_view_text) + mCharger.getOpeningHours());
 
         textView = (TextView) findViewById(R.id.activity_charger_cost_text_view);
-        textView.setText("Cost:\n" + StringUtils.chargerCostStringTransformer(mCharger.getCost()));
+        textView.setText(getString(R.string.charger_activity_cost_text_view_text) + StringUtils.chargerCostStringTransformer(mCharger.getCost()));
 
         textView = (TextView) findViewById(R.id.activity_charger_connector_types_text_view);
-        textView.setText("Connector types:" + StringUtils.connectorTypesStringBuilder(mCharger.getConnectorTypes()));
+        textView.setText(getString(R.string.charger_activity_connector_types_text_view_text) + StringUtils.connectorTypesStringBuilder(mCharger.getConnectorTypes()));
 
         initFavouriteButton();
 
@@ -146,39 +125,69 @@ public class ChargerActivity extends AppCompatActivity {
         initBookingButton();
     }
 
+    private void initDataBase() {
+        mDaoSession = new DaoMaster(new DaoMaster.DevOpenHelper(this, "charger.db").getWritableDb()).newSession();
+
+        ChargerPointDao chargerPointDao = mDaoSession.getChargerPointDao();
+
+        mChargerPointId = Long.parseLong(getIntent().getStringExtra("CHARGER_ID")) + 1;
+
+        mCharger = chargerPointDao.load(mChargerPointId);
+
+        mReservations = mCharger.getReservations();
+
+        CustomerDao customerDao = mDaoSession.getCustomerDao();
+
+        mCustomer = customerDao.load(SplashActivity.customerId);
+    }
+
+    private void initToolbar() {
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle(mCharger.getName());
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+    }
+
     private void initBookingButton() {
         Button bookingButton = findViewById(R.id.activity_charger_booking_button);
         bookingButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                if (startDateTime != null) {
+                if (mStartDateTime != null) {
                     Spinner spinner = findViewById(R.id.activity_charger_booking_spinner);
 
                     DateTime endDateTime;
 
                     if (spinner.getSelectedItemId() == 0) {
-                        endDateTime = startDateTime.plusMinutes(30);
+                        endDateTime = mStartDateTime.plusMinutes(30);
 
                     } else {
-                        endDateTime = startDateTime.plusMinutes(60);
+                        endDateTime = mStartDateTime.plusMinutes(60);
                     }
 
-                    if(checkReservationTimeIsValid(startDateTime, endDateTime)) {
+                    if(checkReservationTimeIsValid(mStartDateTime, endDateTime)) {
 
                         Reservation reservation = new Reservation();
                         reservation.setCustomerId(1);
-                        reservation.setStartDate(startDateTime.toDate());
+                        reservation.setStartDate(mStartDateTime.toDate());
                         reservation.setFinishDate(endDateTime.toDate());
-                        reservation.setChargerPointId(chargerPointId);
+                        reservation.setChargerPointId(mChargerPointId);
 
                         mReservations.add(reservation);
 
                         mDaoSession.insert(reservation);
 
                         mReservations.add(reservation);
-
-                        Log.d("TEST", "ADDED NEW RESERVATION");
 
                         Toast.makeText(getApplicationContext(), getString(R.string.sucessfull_reservation), Toast.LENGTH_LONG).show();
 
@@ -207,8 +216,6 @@ public class ChargerActivity extends AppCompatActivity {
 
                     joinCustomersWithChargerPointsDao.insert(joinCustomersWithChargerPoints);
 
-                    Log.d("TEST", "Added to the favourites");
-
                     addFavourite.hide();
                 }
             });
@@ -227,9 +234,8 @@ public class ChargerActivity extends AppCompatActivity {
                         new com.wdullaer.materialdatetimepicker.time.TimePickerDialog.OnTimeSetListener() {
                             @Override
                             public void onTimeSet(RadialPickerLayout view, int hourOfDay, int minute, int second) {
-                                Log.d("TEST", "TIME IS CHANGED");
 
-                                startDateTime = new DateTime(now.get(Calendar.YEAR),now.get(Calendar.MONTH) + 1 ,now.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
+                                mStartDateTime = new DateTime(now.get(Calendar.YEAR),now.get(Calendar.MONTH) + 1 ,now.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
 
                             }
                         }, now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE),true);
@@ -237,8 +243,8 @@ public class ChargerActivity extends AppCompatActivity {
                 Timepoint timePoint = new Timepoint(23,0,0);
                 tpd.setMinTime(now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE), now.get(Calendar.SECOND));
                 tpd.setMaxTime(timePoint);
-                tpd.setTitle("Select time");
-                tpd.show(getFragmentManager(), "Select time");
+                tpd.setTitle(getString(R.string.charger_activity_time_picker_dialog_title));
+                tpd.show(getFragmentManager(), getString(R.string.charger_activity_time_picker_dialog_title));
             }
         });
     }
@@ -248,7 +254,7 @@ public class ChargerActivity extends AppCompatActivity {
         for (int i = 0; i < mReservations.size(); i++) {
             if((new DateTime(mReservations.get(i).getStartDate()).isBefore(newStartTime) && newStartTime.isBefore(new DateTime(mReservations.get(i).getFinishDate())))
                     || (new DateTime(mReservations.get(i).getStartDate()).isBefore(newFinishTime) && newFinishTime.isBefore(new DateTime(mReservations.get(i).getFinishDate())))
-                    || startDateTime.isEqual(new DateTime(mReservations.get(i).getStartDate()))) {
+                    || mStartDateTime.isEqual(new DateTime(mReservations.get(i).getStartDate()))) {
                 return false;
             }
         }

@@ -27,4 +27,10 @@
     <string name="splash_activity_google_map_not_work">You can\'t make map requests</string>
     <string name="splash_activity_first_run_msg">FIRST RUN</string>
     <string name="sucessfull_reservation">Successful reservation</string>
+    <string name="charger_activity_connector_types_text_view_text">Connector types:</string>
+    <string name="charger_activity_cost_text_view_text">Cost:\n</string>
+    <string name="charger_activity_opening_hours_text_view_text">Opening hours:\n</string>
+    <string name="charger_activity_adress_text_view_text">Adress:\n</string>
+    <string name="charger_activity_time_picker_dialog_title">Select time</string>
+    <string name="charger_activity_time_picker_dialog_title_show">Select time</string>
 </resources>
