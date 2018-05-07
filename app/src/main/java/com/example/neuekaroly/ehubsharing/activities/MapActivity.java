@@ -29,21 +29,14 @@ import com.roughike.bottombar.OnTabSelectListener;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
-import org.joda.time.DateTime;
-
 import java.util.List;
 
 import com.example.neuekaroly.ehubsharing.database.ChargerPoint;
 import com.example.neuekaroly.ehubsharing.database.ChargerPointDao;
-import com.example.neuekaroly.ehubsharing.database.CustomerDao;
-import com.example.neuekaroly.ehubsharing.database.Reservation;
-import com.example.neuekaroly.ehubsharing.database.ReservationDao;
 
 public class MapActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-
-    //private DaoSession mDaoSession;
 
     private Long mCameraPosition = -1L;
 
@@ -70,7 +63,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                     Intent intent = new Intent(MapActivity.this, FavouritesActivity.class);
                     startActivity(intent);
                 } else if (tabId == R.id.tab_reservations) {
-                    updateReservationsByTime();
+                    //updateReservationsByTime();
                     Intent intent = new Intent(MapActivity.this, ReservationsActivity.class);
                     startActivity(intent);
                 } else if (tabId == R.id.tab_search) {
@@ -110,8 +103,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         });
 
         mMap.getUiSettings().setZoomControlsEnabled(true);
-
-        //mMap.setPadding();
 
         addMarkersToMap();
 
@@ -165,17 +156,4 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
 
-    private void updateReservationsByTime() {
-        CustomerDao customerDao = SplashActivity.mDaoSession.getCustomerDao();
-
-        ReservationDao reservationDao = SplashActivity.mDaoSession.getReservationDao();
-
-        List<Reservation> reservations = customerDao.load(1L).getReservations();
-
-        for (int i = 0; i < reservations.size(); i++) {
-            if(new DateTime(reservations.get(i).getFinishDate()).isBeforeNow()) {
-                reservationDao.delete(reservations.get(i));
-            }
-        }
-    }
 }

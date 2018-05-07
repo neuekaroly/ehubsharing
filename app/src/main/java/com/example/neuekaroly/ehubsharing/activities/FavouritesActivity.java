@@ -36,8 +36,6 @@ import com.example.neuekaroly.ehubsharing.database.ReservationDao;
 
 public class FavouritesActivity extends AppCompatActivity {
 
-    private Long mCustomerId;
-
     private List<ChargerPoint> mChargerPointList = new ArrayList<>();
 
     private RecyclerView mRecyclerView;
@@ -47,13 +45,12 @@ public class FavouritesActivity extends AppCompatActivity {
     DaoSession mDaoSession;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favourites);
 
         JodaTimeAndroid.init(this);
-
-        mCustomerId = SplashActivity.customerId;
 
         mDaoSession = new DaoMaster(new DaoMaster.DevOpenHelper(this, "charger.db").getWritableDb()).newSession();
 
@@ -64,10 +61,19 @@ public class FavouritesActivity extends AppCompatActivity {
         prepareFavouritesData();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        final BottomBar bottomBar = (BottomBar) findViewById(R.id.bottomBar);
+
+        bottomBar.selectTabAtPosition(2);
+    }
+
     private void prepareFavouritesData() {
         CustomerDao customerDao = mDaoSession.getCustomerDao();
 
-        List<ChargerPoint> chargerPointsWitThisCustomer = customerDao.load(mCustomerId).getChargerPointsWitThisCustomer();
+        List<ChargerPoint> chargerPointsWitThisCustomer = customerDao.load(SplashActivity.customerId).getChargerPointsWitThisCustomer();
 
         for (int i = 0; i < chargerPointsWitThisCustomer.size(); i++) {
             mChargerPointList.add(chargerPointsWitThisCustomer.get(i));
@@ -101,7 +107,7 @@ public class FavouritesActivity extends AppCompatActivity {
 
                 CustomerDao customerDao = mDaoSession.getCustomerDao();
 
-                List<ChargerPoint> chargerPointsWitThisCustomer = customerDao.load(mCustomerId).getChargerPointsWitThisCustomer();
+                List<ChargerPoint> chargerPointsWitThisCustomer = customerDao.load(SplashActivity.customerId).getChargerPointsWitThisCustomer();
 
                 Long deleteChargerId = chargerPointsWitThisCustomer.get(position).getId();
 
@@ -110,7 +116,7 @@ public class FavouritesActivity extends AppCompatActivity {
                 List<JoinCustomersWithChargerPoints> joinCustomersWithChargerPoints = joinCustomersWithChargerPointsDao.loadAll();
 
                 for (int i = 0; i < joinCustomersWithChargerPoints.size(); i++) {
-                    if(joinCustomersWithChargerPoints.get(i).getChargerPointId() == deleteChargerId && joinCustomersWithChargerPoints.get(i).getCustomerId() == mCustomerId) {
+                    if(joinCustomersWithChargerPoints.get(i).getChargerPointId() == deleteChargerId && joinCustomersWithChargerPoints.get(i).getCustomerId() == SplashActivity.customerId) {
                         JoinCustomersWithChargerPoints deleteFavourite = joinCustomersWithChargerPoints.get(i);
                         joinCustomersWithChargerPointsDao.delete(deleteFavourite);
                         break;
@@ -157,7 +163,7 @@ public class FavouritesActivity extends AppCompatActivity {
                     Intent intent = new Intent(FavouritesActivity.this, MapActivity.class);
                     startActivity(intent);
                 } else if (tabId == R.id.tab_reservations) {
-                    updateReservationsByTime();
+                    //updateReservationsByTime();
                     Intent intent = new Intent(FavouritesActivity.this, ReservationsActivity.class);
                     startActivity(intent);
                 } else if (tabId == R.id.tab_search) {
@@ -167,19 +173,5 @@ public class FavouritesActivity extends AppCompatActivity {
 
             }
         });
-    }
-
-    private void updateReservationsByTime() {
-        CustomerDao customerDao = mDaoSession.getCustomerDao();
-
-        ReservationDao reservationDao = mDaoSession.getReservationDao();
-
-        List<Reservation> reservations = customerDao.load(mCustomerId).getReservations();
-
-        for (int i = 0; i < reservations.size(); i++) {
-            if(new DateTime(reservations.get(i).getFinishDate()).isBeforeNow()) {
-                reservationDao.delete(reservations.get(i));
-            }
-        }
     }
 }

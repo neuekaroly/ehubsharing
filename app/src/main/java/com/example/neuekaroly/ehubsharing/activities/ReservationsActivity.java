@@ -16,6 +16,7 @@ import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.example.neuekaroly.ehubsharing.adapters.ReservationAdapter;
@@ -28,6 +29,8 @@ import com.example.neuekaroly.ehubsharing.database.DaoSession;
 import com.example.neuekaroly.ehubsharing.database.Reservation;
 import com.example.neuekaroly.ehubsharing.database.ReservationDao;
 import com.example.neuekaroly.ehubsharing.helpers.ChargerReservation;
+
+import org.joda.time.DateTime;
 
 public class ReservationsActivity extends AppCompatActivity {
     private Long mCustomerId;
@@ -57,6 +60,15 @@ public class ReservationsActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        final BottomBar bottomBar = (BottomBar) findViewById(R.id.bottomBar);
+
+        bottomBar.selectTabAtPosition(1);
+    }
+
     private void prepareReservationsData() {
         CustomerDao customerDao = mDaoSession.getCustomerDao();
 
@@ -64,9 +76,21 @@ public class ReservationsActivity extends AppCompatActivity {
 
         List<Reservation> reservations = customerDao.load(mCustomerId).getReservations();
 
+        List<Reservation> deletedReservations = new LinkedList<>();
+
         for (int i = 0; i < reservations.size(); i++) {
-            ChargerReservation chargerReservation = new ChargerReservation(reservations.get(i), chargerPointDao.load(reservations.get(i).getChargerPointId()));
-            mChargerReservationList.add(chargerReservation);
+            if(new DateTime(reservations.get(i).getFinishDate()).isBeforeNow()) {
+                deletedReservations.add(reservations.get(i));
+            } else {
+                ChargerReservation chargerReservation = new ChargerReservation(reservations.get(i), chargerPointDao.load(reservations.get(i).getChargerPointId()));
+                mChargerReservationList.add(chargerReservation);
+            }
+        }
+
+        ReservationDao reservationDao = mDaoSession.getReservationDao();
+
+        for (int i = 0; i < deletedReservations.size(); i++) {
+            reservationDao.delete(deletedReservations.get(i));
         }
 
         mAdapter.notifyDataSetChanged();

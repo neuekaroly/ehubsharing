@@ -8,6 +8,10 @@ import java.util.Map;
 
 public class StringUtils {
     public static String connectorTypesStringBuilder(String str) {
+        if(str.equals("")) {
+            return "";
+        }
+
         StringBuilder stringBuilder = new StringBuilder();
 
         String connectorTypes[] = str.split(",");

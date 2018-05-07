@@ -41,7 +41,7 @@ public class SplashActivity extends AppCompatActivity {
 
     public static DaoSession mDaoSession;
 
-    SharedPreferences sharedPreferences = null;
+    SharedPreferences mSharedPreferences = null;
 
     public static Long customerId = 1L;
 
@@ -49,7 +49,7 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        sharedPreferences = getSharedPreferences("com.example.neuekaroly.ehubsharing", MODE_PRIVATE);
+        mSharedPreferences = getSharedPreferences("com.example.neuekaroly.ehubsharing", MODE_PRIVATE);
 
         mDaoSession = new DaoMaster(new DaoMaster.DevOpenHelper(this, "charger.db").getWritableDb()).newSession();
 
@@ -77,12 +77,12 @@ public class SplashActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        if (sharedPreferences.getBoolean("firstrun", true)) {
+        if (mSharedPreferences.getBoolean("firstrun", true)) {
             Log.d("TEST", getString(R.string.splash_activity_first_run_msg));
 
             fillUpDatabase();
 
-            sharedPreferences.edit().putBoolean("firstrun", false).commit();
+            mSharedPreferences.edit().putBoolean("firstrun", false).commit();
         }
     }
 

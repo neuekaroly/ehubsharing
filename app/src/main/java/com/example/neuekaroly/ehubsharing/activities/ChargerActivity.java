@@ -13,15 +13,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.neuekaroly.ehubsharing.R;
-import com.wdullaer.materialdatetimepicker.time.RadialPickerLayout;
-import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
-import com.wdullaer.materialdatetimepicker.time.Timepoint;
-
-import org.joda.time.DateTime;
-
-import java.util.Calendar;
-import java.util.List;
-
 import com.example.neuekaroly.ehubsharing.database.ChargerPoint;
 import com.example.neuekaroly.ehubsharing.database.ChargerPointDao;
 import com.example.neuekaroly.ehubsharing.database.Customer;
@@ -32,6 +23,14 @@ import com.example.neuekaroly.ehubsharing.database.JoinCustomersWithChargerPoint
 import com.example.neuekaroly.ehubsharing.database.JoinCustomersWithChargerPointsDao;
 import com.example.neuekaroly.ehubsharing.database.Reservation;
 import com.example.neuekaroly.ehubsharing.util.StringUtils;
+import com.wdullaer.materialdatetimepicker.time.RadialPickerLayout;
+import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
+import com.wdullaer.materialdatetimepicker.time.Timepoint;
+
+import org.joda.time.DateTime;
+
+import java.util.Calendar;
+import java.util.List;
 
 
 /**
@@ -72,27 +71,31 @@ public class ChargerActivity extends AppCompatActivity {
     private final Runnable m_Runnable = new Runnable() {
         public void run() {
 
-            for (int i = 0; i < mReservations.size(); i++) {
-                if(new DateTime(mReservations.get(i).getFinishDate()) == DateTime.now() || new DateTime(mReservations.get(i).getStartDate()) == DateTime.now()
-                        || (new DateTime(mReservations.get(i).getFinishDate()).isAfterNow() && new DateTime(mReservations.get(i).getStartDate()).isBeforeNow())) {
-                    mTextView.setText("IT'S NOT FREE NOW");
-                    mTextView.setBackgroundColor(Color.RED);
-                    break;
-                } else {
-                    mTextView.setText("IT'S FREE NOW");
-                    mTextView.setBackgroundColor(Color.GREEN);
-                }
-            }
-
-            if(mReservations.size() == 0) {
-                mTextView.setText("IT'S FREE NOW");
-                mTextView.setBackgroundColor(Color.GREEN);
-            }
+            changeTextView();
 
             mHandler.postDelayed(m_Runnable, 5000);
         }
 
     };
+
+    public void changeTextView() {
+        for (int i = 0; i < mReservations.size(); i++) {
+            if(new DateTime(mReservations.get(i).getFinishDate()) == DateTime.now() || new DateTime(mReservations.get(i).getStartDate()) == DateTime.now()
+                    || (new DateTime(mReservations.get(i).getFinishDate()).isAfterNow() && new DateTime(mReservations.get(i).getStartDate()).isBeforeNow())) {
+                mTextView.setText("IT'S NOT FREE NOW");
+                mTextView.setBackgroundColor(Color.RED);
+                break;
+            } else {
+                mTextView.setText("IT'S FREE NOW");
+                mTextView.setBackgroundColor(Color.GREEN);
+            }
+        }
+
+        if(mReservations.size() == 0) {
+            mTextView.setText("IT'S FREE NOW");
+            mTextView.setBackgroundColor(Color.GREEN);
+        }
+    }
 
     @Override
     public void onBackPressed() {
@@ -191,6 +194,7 @@ public class ChargerActivity extends AppCompatActivity {
 
                         Toast.makeText(getApplicationContext(), getString(R.string.sucessfull_reservation), Toast.LENGTH_LONG).show();
 
+                        changeTextView();
                     } else {
                         Toast.makeText(getApplicationContext(),getString(R.string.not_valid_the_selected_starttime_string), Toast.LENGTH_LONG).show();
                     }
@@ -258,7 +262,6 @@ public class ChargerActivity extends AppCompatActivity {
                 return false;
             }
         }
-
         return true;
     }
 }

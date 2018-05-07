@@ -12,13 +12,8 @@ import java.util.List;
 
 import com.example.neuekaroly.ehubsharing.database.ChargerPoint;
 
-/**
- * Created by neue.karoly on 2018.03.31..
- * CSAK EGY UTIL OSZTÁLY A JSON-BE VALÓ KIÍÍRÁSHOZ, VÉGSŐ BUID-BE NEM KERÜL BELE, TÖRLENDŐ LESZ
- */
-
 public class MapPointsWriter extends AppCompatActivity {
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+   /* @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public  MapPointsWriter() {
         List<ChargerPoint> chargerPoints = new LinkedList<ChargerPoint>();
 
@@ -77,5 +72,5 @@ public class MapPointsWriter extends AppCompatActivity {
         String str = gson.toJson(chargerPoints);
 
         Log.d("TEST", str);
-    }
+    }*/
 }

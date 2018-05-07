@@ -59,6 +59,15 @@ public class SearchActivity extends AppCompatActivity {
         initRecyclerView();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        final BottomBar bottomBar = (BottomBar) findViewById(R.id.bottomBar);
+
+        bottomBar.selectTabAtPosition(3);
+    }
+
     private void initRecyclerView() {
         mRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), mRecyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
@@ -132,10 +141,10 @@ public class SearchActivity extends AppCompatActivity {
         return true;
     }
 
-    private List<ChargerPoint> filter(List<ChargerPoint> pl, String query) {
+    private List<ChargerPoint> filter(List<ChargerPoint> chargerPoints, String query) {
         query=query.toLowerCase();
         final List<ChargerPoint> filteredModeList=new ArrayList<>();
-        for (ChargerPoint model:pl) {
+        for (ChargerPoint model:chargerPoints) {
             final String name = model.getName().toLowerCase();
 
             final String adress = model.getAdress().toLowerCase();
