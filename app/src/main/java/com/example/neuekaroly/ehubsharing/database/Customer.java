@@ -11,7 +11,7 @@ import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.DaoException;
 
 /**
- * Created by neue.karoly on 2018.04.02..
+ * This entity represent a Customer
  */
 
 @Entity

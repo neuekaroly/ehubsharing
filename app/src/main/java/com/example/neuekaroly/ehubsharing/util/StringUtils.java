@@ -7,6 +7,9 @@ import java.util.LinkedList;
 import java.util.Map;
 
 public class StringUtils {
+    /**
+     * This method make the right output string from the connector-types
+     */
     public static String connectorTypesStringBuilder(String str) {
         if(str.equals("")) {
             return "";
@@ -27,6 +30,9 @@ public class StringUtils {
         return stringBuilder.toString();
     }
 
+    /**
+     * This method make the right output string from charger-cost
+     */
     public static String chargerCostStringTransformer(int cost) {
         if(cost == 0) {
             return "Free";

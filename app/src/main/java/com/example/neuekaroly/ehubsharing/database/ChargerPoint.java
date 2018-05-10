@@ -10,7 +10,7 @@ import java.util.List;
 import org.greenrobot.greendao.DaoException;
 
 /**
- * Created by neue.karoly on 2018.03.30..
+ * This entity represent a ChargerPoint
  */
 
 @Entity

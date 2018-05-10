@@ -35,6 +35,7 @@ import java.util.List;
 
 /**
  * This Activity shows the information about an electric charger
+ * Int this Activity can the user reserve a charger
  */
 public class ChargerActivity extends AppCompatActivity {
 
@@ -195,6 +196,8 @@ public class ChargerActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), getString(R.string.sucessfull_reservation), Toast.LENGTH_LONG).show();
 
                         changeTextView();
+
+                        mStartDateTime = null;
                     } else {
                         Toast.makeText(getApplicationContext(),getString(R.string.not_valid_the_selected_starttime_string), Toast.LENGTH_LONG).show();
                     }

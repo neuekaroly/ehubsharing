@@ -29,6 +29,9 @@ import com.example.neuekaroly.ehubsharing.database.ChargerPoint;
 import com.example.neuekaroly.ehubsharing.database.DaoMaster;
 import com.example.neuekaroly.ehubsharing.database.DaoSession;
 
+/**
+ * In this Activity the user can search int the charger-database
+ */
 public class SearchActivity extends AppCompatActivity {
     SearchView mSearchView;
 
@@ -38,6 +41,8 @@ public class SearchActivity extends AppCompatActivity {
 
     SearchChargerAdapter mAdapter;
 
+    List<ChargerPoint> filteredList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +51,8 @@ public class SearchActivity extends AppCompatActivity {
         DaoSession mDaoSession = new DaoMaster(new DaoMaster.DevOpenHelper(this, "charger.db").getWritableDb()).newSession();
 
         chargerPointList = mDaoSession.getChargerPointDao().loadAll();
+
+        filteredList = chargerPointList;
 
         initBottomBar();
 
@@ -72,9 +79,8 @@ public class SearchActivity extends AppCompatActivity {
         mRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), mRecyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                Toast.makeText(getApplicationContext(), chargerPointList.get(position).getId() + " is selected!", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(SearchActivity.this, MapActivity.class);
-                intent.putExtra("CHARGER_ID", Long.toString(chargerPointList.get(position).getId()));
+                intent.putExtra("CHARGER_ID", Long.toString(filteredList.get(position).getId()));
                 startActivity(intent);
             }
 
@@ -143,19 +149,18 @@ public class SearchActivity extends AppCompatActivity {
 
     private List<ChargerPoint> filter(List<ChargerPoint> chargerPoints, String query) {
         query=query.toLowerCase();
-        final List<ChargerPoint> filteredModeList=new ArrayList<>();
+        filteredList=new ArrayList<>();
         for (ChargerPoint model:chargerPoints) {
             final String name = model.getName().toLowerCase();
 
             final String adress = model.getAdress().toLowerCase();
 
-            if (name.contains(query) || adress.contains(query))
-            {
-                filteredModeList.add(model);
+            if (name.contains(query) || adress.contains(query)) {
+                filteredList.add(model);
             }
         }
 
-        return filteredModeList;
+        return filteredList;
     }
 
     private void changeSearchViewTextColor(View view) {

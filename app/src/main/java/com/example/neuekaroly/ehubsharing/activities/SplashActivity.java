@@ -33,6 +33,9 @@ import com.example.neuekaroly.ehubsharing.database.CustomerDao;
 import com.example.neuekaroly.ehubsharing.database.DaoMaster;
 import com.example.neuekaroly.ehubsharing.database.DaoSession;
 
+/**
+ * This Activity create the welcome screen
+ */
 public class SplashActivity extends AppCompatActivity {
 
     private static int SPLASH_TIME_OUT = 3000;
@@ -86,6 +89,9 @@ public class SplashActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * This method load the chargerpoints from the database
+     */
     private void fillUpDatabase() {
         Reader reader = null;
         try {
@@ -113,6 +119,9 @@ public class SplashActivity extends AppCompatActivity {
         customerPointDao.insert(customer);
     }
 
+    /**
+     * This method check the MAPS services is OK
+     */
     public boolean isServicesOk() {
         String TAG = getString(R.string.splash_actvitiy_name);
         Log.d(TAG, getString(R.string.splash_activity_google_services_check_msg));

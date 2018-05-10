@@ -32,6 +32,10 @@ import com.example.neuekaroly.ehubsharing.helpers.ChargerReservation;
 
 import org.joda.time.DateTime;
 
+/**
+ * This Activity shows reservations for the user
+ * The user can delete from the reservations
+ */
 public class ReservationsActivity extends AppCompatActivity {
     private Long mCustomerId;
 
@@ -136,7 +140,6 @@ public class ReservationsActivity extends AppCompatActivity {
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-                Toast.makeText(ReservationsActivity.this, "Deleted", Toast.LENGTH_SHORT).show();
                 final int position = viewHolder.getAdapterPosition();
 
                 ReservationDao reservationDao = mDaoSession.getReservationDao();

@@ -17,8 +17,6 @@ import com.roughike.bottombar.OnTabSelectListener;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
-import org.joda.time.DateTime;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,9 +29,11 @@ import com.example.neuekaroly.ehubsharing.database.DaoMaster;
 import com.example.neuekaroly.ehubsharing.database.DaoSession;
 import com.example.neuekaroly.ehubsharing.database.JoinCustomersWithChargerPoints;
 import com.example.neuekaroly.ehubsharing.database.JoinCustomersWithChargerPointsDao;
-import com.example.neuekaroly.ehubsharing.database.Reservation;
-import com.example.neuekaroly.ehubsharing.database.ReservationDao;
 
+/**
+ * This Activity shows favourites chargers for the user
+ * The user can delete from the favourites
+ */
 public class FavouritesActivity extends AppCompatActivity {
 
     private List<ChargerPoint> mChargerPointList = new ArrayList<>();
@@ -103,8 +103,6 @@ public class FavouritesActivity extends AppCompatActivity {
                 Toast.makeText(FavouritesActivity.this, "Deleted", Toast.LENGTH_SHORT).show();
                 final int position = viewHolder.getAdapterPosition();
 
-                //TODO: REFACTOR THIS SPAGHETTI CODE
-
                 CustomerDao customerDao = mDaoSession.getCustomerDao();
 
                 List<ChargerPoint> chargerPointsWitThisCustomer = customerDao.load(SplashActivity.customerId).getChargerPointsWitThisCustomer();
@@ -123,8 +121,6 @@ public class FavouritesActivity extends AppCompatActivity {
                     }
                 }
 
-                //TODO: END
-
                 mChargerPointList.remove(position);
                 mAdapter.notifyDataSetChanged();
             }
@@ -134,7 +130,6 @@ public class FavouritesActivity extends AppCompatActivity {
         mRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), mRecyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                Toast.makeText(getApplicationContext(), mChargerPointList.get(position).getId() + " is selected!", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(FavouritesActivity.this, MapActivity.class);
                 intent.putExtra("CHARGER_ID", Long.toString(mChargerPointList.get(position).getId()));
                 startActivity(intent);

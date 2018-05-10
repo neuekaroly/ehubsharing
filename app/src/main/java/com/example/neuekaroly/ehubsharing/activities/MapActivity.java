@@ -34,6 +34,9 @@ import java.util.List;
 import com.example.neuekaroly.ehubsharing.database.ChargerPoint;
 import com.example.neuekaroly.ehubsharing.database.ChargerPointDao;
 
+/**
+ * This Activity shows the map with the charger points
+ */
 public class MapActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;

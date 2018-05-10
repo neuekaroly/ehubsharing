@@ -5,7 +5,7 @@ import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Generated;
 
 /**
- * Created by neue.karoly on 2018.04.02..
+ * This entity represent the many to many join from the customer to the charger-point
  */
 
 @Entity
